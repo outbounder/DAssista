@@ -24,9 +24,7 @@ class ApdmlModuleFactory
 		
 		// load the module
 		var nekoModule:Module = Loader.local().loadModule(this.getApdmlModuleFolder(module)+this.getApdmlModuleName(module) + ".n");
-		//Module.readPath(, [this.getApdmlModuleFolder(module)], Loader.local());
-		var apdmlModule:ApdmlModule = new ApdmlModule(nekoModule, this.getApdmlModuleName(module));
-		return apdmlModule;
+		return new ApdmlModule(nekoModule, this.getApdmlModuleName(module));
 	}
 	
 	public function getApdmlModuleHaxePath(module:String):String
@@ -50,8 +48,8 @@ class ApdmlModuleFactory
 		{
 			var oldCwd:String = Sys.getCwd();
 			Sys.setCwd(this.getApdmlModuleFolder(module));
-			var cmd:String = "haxe -cp " + this.rootPath + " -neko " + moduleName + ".n " + module;
-			Sys.command(cmd);
+			var cmd:String = "haxe -cp " + this.rootPath + " -neko " + moduleName + ".n -main " + module;
+			trace(Sys.command(cmd));
 			Sys.setCwd(oldCwd);
 		}
 		else

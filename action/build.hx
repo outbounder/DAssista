@@ -1,11 +1,19 @@
 package haxe.org.dassista.action;
 
-import haxe.org.dassista.pdml.IApdmlModule;
-
-class Build implements IApdmlModule
+class Build implements haxe.org.dassista.pdml.IApdmlModule
 {
+	public function new()
+	{
+		
+	}
+	
 	public function execute(context:Dynamic):Dynamic
 	{
-		trace(context+" - tested");
+		return context+" - tested";
+	}
+	
+	public static function main():Dynamic
+	{
+		return new Build();
 	}
 }

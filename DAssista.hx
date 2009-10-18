@@ -14,7 +14,7 @@ class DAssista
 	public static function main()
 	{
 		trace(Sys.args());
-		var factory:ApdmlModuleFactory = new ApdmlModuleFactory("D:/pd-repo/");
+		var factory:ApdmlModuleFactory = new ApdmlModuleFactory("E:/pd-repo/");
 		var module:ApdmlModule = factory.createApdmlModule("haxe.org.dassista.action.Build");
 		trace(module.execute("test"));
 	}

@@ -19,10 +19,9 @@ class ApdmlModule implements IApdmlModule
 	
 	public function execute(context:Dynamic):Dynamic
 	{
-		//var classes : Dynamic = this.nekoModule.exportsTable().__classes;
-		trace(Type.resolveClass("haxe.org.dassista.action.Build"));
-    	//this.apdmlModuleInstane = cast(Type.createInstance(, []), IApdmlModule);
-    	
+		trace(this.nekoModule);
+    	this.apdmlModuleInstane = this.nekoModule.execute();
+		//return this.apdmlModuleInstane.execute(context);
 		return this.apdmlModuleInstane.execute(context);
 	}
 }
