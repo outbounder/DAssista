@@ -18,6 +18,8 @@ class DAssista extends ScriptedModule
 {
     public static function main():Dynamic
 	{
+	    var start:Float = Sys.cpuTime();
+	    trace("start " + start);
         // init context
 	    var contextFactory:MultiModuleContextFactory = new MultiModuleContextFactory(null);
 		var context:IMultiModuleContext = contextFactory.generate();
@@ -32,6 +34,10 @@ class DAssista extends ScriptedModule
 		
 		// create instance & execute
 		var instance:DAssista = new DAssista();
-		return instance.execute(context);
+		var result:Dynamic = instance.execute(context);
+		var end:Float = Sys.cpuTime();
+		trace("end " + Sys.cpuTime());
+		trace("time "+ (end-start));
+		return result;
 	}
 }

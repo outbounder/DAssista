@@ -11,8 +11,8 @@ class DAssistaConfig extends ScriptedModule
 		return new DAssistaConfig();
 	}
 	
-	public function exec(context:IMultiModuleContext,action:Fast):Dynamic
+	public function exec(moduleContext:IMultiModuleContext, actionContext:Fast):Dynamic
 	{
-		trace(action);
+		trace(actionContext);				
 	}
 }

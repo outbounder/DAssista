@@ -1,5 +1,5 @@
-<pdml action="haxe.org.dassista.action.DAssistaConfig">
-	<config>
+<pdml classname="haxe.org.dassista.action.DAssistaConfig">
+	<exec >
 	 <publicClone>git://github.com/outbounder/DAssista.git</publicClone>
-	</config>
+	</exec>
 </pdml>
