@@ -1,7 +1,6 @@
-package haxe.org.dassista.pdml;
+package haxe.org.dassista.multicore;
 
-interface IApdmlModule
+extern interface IMultiModule 
 {
-	function execute(context:IApdmlModuleContext):Dynamic;
-	function getContext():IApdmlModuleContext;
+	function execute(context:IMultiModuleContext):Dynamic;
 }

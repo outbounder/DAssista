@@ -1,79 +1,37 @@
 package haxe.org.dassista;
 
-import haxe.org.dassista.pdml.APDMLProcessor;
-import haxe.org.dassista.pdml.ApdmlModuleFactory;
-import haxe.org.dassista.pdml.IApdmlModule;
-import haxe.org.dassista.pdml.IApdmlModuleContext;
-
+import haxe.org.dassista.module.ScriptedModule;
+import haxe.org.dassista.multicore.IMultiModule;
+import haxe.org.dassista.multicore.IMultiModuleContext;
+import haxe.org.dassista.multicore.MultiModuleContextFactory;
 
 import haxe.Log;
 import neko.Sys;
+import haxe.xml.Fast;
+import neko.io.File;
+import neko.FileSystem;
 import neko.vm.Loader;
 import neko.vm.Module;
 
 
-class DAssista implements IApdmlModule
+class DAssista extends ScriptedModule
 {
-	private var moduleFactory:ApdmlModuleFactory;
-	
-	public function new()
+    public static function main():Dynamic
 	{
-		this.moduleFactory = new ApdmlModuleFactory(this.getRootPath());
-	}
-	
-	public static function main()
-	{
+        // init context
+	    var contextFactory:MultiModuleContextFactory = new MultiModuleContextFactory(null);
+		var context:IMultiModuleContext = contextFactory.generate();
+		context.hashView("root",FileSystem.fullPath(Sys.args()[0])); // global root 
+		
+		// retrieve the pdml data
+        var pdmlContent:String = File.getContent(context.hashView("root")+Sys.args()[1]);
+        var xml:Xml = Xml.parse(pdmlContent);
+        var pdml:Fast = new Fast(xml.firstElement());
+        
+        context.hashView("pdml",pdml); // global pdml
+		
+		// create instance & execute
 		var instance:DAssista = new DAssista();
-		instance.execute(null);
-	}
-	
-	public function execute(context:IApdmlModuleContext):Dynamic
-	{
-		if(this.hasPdmlPath())
-		{
-			var apdmlProcessor:APDMLProcessor = new APDMLProcessor(this.getPdmlPath(),this.getRootPath());
-			try
-			{
-				trace("EXECUTE FINISHED:"+apdmlProcessor.execute(this.moduleFactory.createApdmlModuleContext(this,null)));
-			}
-			catch(error:Dynamic)
-			{
-				trace("ERROR");
-				trace(error);
-			}
-		}
-		else
-			trace("use -pdml %file% switch to execute pdml script");
-	}
-	
-	public function getContext():IApdmlModuleContext
-	{
-		return null;
-	}
-	
-	private function hasPdmlPath():Bool
-	{
-		if(Sys.args()[0] == "-pdml")
-			return true;
-		else
-			return false;
-	}
-	
-	private function getPdmlPath():String
-	{
-		return Sys.args()[1];
-	}
-	
-	private function hasRootPath():Bool
-	{
-		if(Sys.args()[2] == "-root")
-			return true;
-		else
-			return false;
-	}
-	
-	private function getRootPath():String
-	{
-		return this.hasRootPath()?Sys.args()[3]:"./";
+		return instance.execute(context);
 	}
 }

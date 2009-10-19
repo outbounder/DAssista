@@ -1,4 +1,4 @@
-package haxe.org.dassista.pdml;
+package haxe.org.dassista.multicore;
 
 import haxe.org.dassista.multicore.IMultiModule;
 import haxe.org.dassista.multicore.IMultiModuleContext;
@@ -23,17 +23,15 @@ class MultiModuleFactory
 	{
 		// ensure that the module is up-to-date
 		var compiler:ModuleCompiler = new ModuleCompiler(this.rootPath, this.getMultiModuleHaxePath(moduleClassPath));
-		compiler.compile();
+		// compile to the module's class path folder
+		var result:Int = compiler.compile();
+		if(result != 0)
+		  throw "exception found during compile... "+result;
 		
 		// load the module & return its instance
-		var nekoModule:Module = Loader.local().loadModule(this.getMultiModuleNekoPath(moduleClassPath));
-		var multiModuleInstance:Dynamic = nekoModule.execute();
-		if(Std.is(multiModuleInstance, IMultiModule))
-		{
-      return multiModuleInstance;
-    }
-    else
-      throw "given module class is not a multimodule entry point";
+		var moduleCompiledPath:String = this.rootPath+this.getMultiModuleNekoPath(moduleClassPath);
+		var nekoModule:Module = Loader.local().loadModule(moduleCompiledPath);
+		return nekoModule.execute();
 	}
 	
 	public function getMultiModuleHaxePath(module:String):String
