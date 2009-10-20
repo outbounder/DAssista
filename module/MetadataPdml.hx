@@ -3,13 +3,13 @@ package haxe.org.dassista.module;
 import haxe.xml.Fast;
 import neko.io.File;
 
-import haxe.org.dassista.multicore.AbstractModule;
-import haxe.org.dassista.multicore.IMultiModule;
-import haxe.org.dassista.multicore.IMultiModuleContext;
+import haxe.org.multicore.neko.AbstractMultiModule;
+import haxe.org.multicore.neko.IMultiModule;
+import haxe.org.multicore.neko.IMultiModuleContext;
 
-class MetadataPdml extends AbstractModule
+class MetadataPdml extends AbstractMultiModule
 {
-    public static function main():IMultiModule
+    public static function main():Dynamic
     {
         return new MetadataPdml();
     }
@@ -21,22 +21,16 @@ class MetadataPdml extends AbstractModule
     
     public override function execute(context:IMultiModuleContext):Bool
     {
-        // save the incoming context
-        this.context = context;
+        super.execute(context);
         
-        // read the default context input required field
-        var modulePdmlName:String = context.hashView("module");
+        var pdml:Fast = context.get("pdml"); 
 
-        // try loading the pdml
-        var pdmlContent:String = File.getContent(context.hashView("root")+modulePdmlName.split(".").join("/")+"/module.pdml");
-        var xml:Xml = Xml.parse(pdmlContent);
-        var pdml:Fast = new Fast(xml.firstElement());
-        
         for(entry in pdml.elements)
         {
-            this.context.hashView(entry.name, entry.innerData);
+            context.put(entry.name, entry.innerData);
+            trace(context.get(entry.name));
         }
-            
+        
         return true;
     }
 }

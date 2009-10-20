@@ -1,50 +1,41 @@
 package haxe.org.dassista;
 
-import haxe.org.dassista.module.ActionPdml;
-import haxe.org.dassista.multicore.AbstractModule;
-import haxe.org.dassista.multicore.IMultiModule;
-import haxe.org.dassista.multicore.IMultiModuleContext;
-import haxe.org.dassista.multicore.MultiModuleFactory;
-import haxe.org.dassista.multicore.MultiModuleContextFactory;
+import haxe.org.dassista.module.PdmlFactory;
+import haxe.org.dassista.module.PdmlContext;
+import haxe.org.multicore.neko.IMultiModule;
+import haxe.org.multicore.neko.IMultiModuleContext;
+import haxe.org.multicore.neko.MultiModuleFactory;
 
-import haxe.Log;
 import neko.Sys;
-import haxe.xml.Fast;
-
-import neko.io.File;
 import neko.FileSystem;
-import neko.vm.Loader;
-import neko.vm.Module;
 
 
-class DAssista extends ActionPdml
+class DAssista extends PdmlFactory
 {
     public static function main():Bool
 	{
 	    var start:Float = Sys.time();
 	    trace("start " + start);
 	    
+	    var instance:DAssista = new DAssista();
 	    var globalRoot:String = FileSystem.fullPath(Sys.args()[0]);
-        var instance:DAssista = new DAssista();
+        var pdml:String = FileSystem.fullPath(globalRoot+Sys.args()[1]);
         var compileModules:Bool = Sys.args()[2]=="true"?true:false;
         
         // init context
-	    var contextFactory:MultiModuleContextFactory = new MultiModuleContextFactory(instance);
-		var context:IMultiModuleContext = contextFactory.generate(new MultiModuleFactory(globalRoot,compileModules));
-		
-		// retrieve the pdml data
-        var pdmlContent:String = File.getContent(globalRoot+Sys.args()[1]);
-        var xml:Xml = Xml.parse(pdmlContent);
-        var pdml:Fast = new Fast(xml.firstElement());
-        
+        var moduleFactory:MultiModuleFactory = new MultiModuleFactory(globalRoot,compileModules);
+		var context:PdmlContext = new PdmlContext(instance,moduleFactory);
+
         // set initial input values
-        context.hashView("pdml",pdml); // pdml content
-        context.hashView("root",globalRoot); // global root 
+        context.put("pdml",pdml); // pdml content
+        context.put("root",globalRoot); // global root 
 		
 		// create execute
 		var result:Bool = instance.execute(context);
 		if(!result)
 		  trace("execute failed");
+		  
+		trace(context.get("result"));
 		  
 		var end:Float = Sys.time();
 		trace("end " + end);
@@ -52,3 +43,4 @@ class DAssista extends ActionPdml
 		return result;
 	}
 }
+

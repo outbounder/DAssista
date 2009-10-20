@@ -2,8 +2,8 @@ package haxe.org.dassista.module;
 
 import haxe.xml.Fast;
 import haxe.org.dassista.module.ActionPdml;
-import haxe.org.dassista.multicore.IMultiModule;
-import haxe.org.dassista.multicore.IMultiModuleContext;
+import haxe.org.multicore.neko.IMultiModule;
+import haxe.org.multicore.neko.IMultiModuleContext;
 
 class Git extends ActionPdml
 {
@@ -19,17 +19,22 @@ class Git extends ActionPdml
 
     public function update(context:IMultiModuleContext):Bool
     {
-       var pdml:Fast = context.hashView("pdml");
+       var pdml:Fast = context.get("pdml");
        
-       var metaDataModule:IMultiModule = context.getModuleFactory().createMultiModule("haxe.org.dassista.module.MetadataPdml");
-       var metaDataContext:IMultiModuleContext = context.getModuleContextFactory().clone(context);
-       metaDataContext.hashView("module", pdml.att.target);
-       metaDataModule.execute(metaDataContext);
-       
-       var gitClone:String = metaDataModule.getContext().hashView("gitClone");
-       trace(gitClone);
-       trace(metaDataModule.getContext().hashView("version"));
-       context.hashView("result","OK");
+       var modulePdmlParser:IMultiModule = context.getModuleFactory().createMultiModuleByClassPath("haxe.org.dassista.module.PdmlFactory");
+       if(modulePdmlParser.loadModulePdmlFast(pdml.att.target+".module",context))
+       {         
+         trace(context.get("gitClone"));
+         trace(context.get("version"));
+         context.put("result","OK");
+         trace(context.get("result"));
+       }
+       else
+       {
+         trace("load failed");
+         context.put("result", "FAILED");
+         trace(context.get("result"));
+       }
        return true;
     }
 }
