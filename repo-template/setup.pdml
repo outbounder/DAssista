@@ -1,0 +1,5 @@
+<module>
+	<module classname="haxe.org.dassista.module.Git">
+	   <update tag="HEAD" target="haxe.org.dassista" />
+	</module>
+</module>

@@ -5,7 +5,10 @@ import haxe.xml.Fast;
 
 interface IMultiModuleContext
 {
-	function getCaller():IMultiModule;
-	function getInputContext():IMultiModuleInput;
-	function getOutputContext():IMultiModuleOutput;
+	public function getCaller():IMultiModule;
+	public function getHashView():Hash<Dynamic>;
+    public function getVectorView():Array<Dynamic>;
+    public function hashView(?key:String,?value:Dynamic):Dynamic;
+    public function getModuleFactory():MultiModuleFactory;
+    public function getModuleContextFactory():MultiModuleContextFactory;
 }

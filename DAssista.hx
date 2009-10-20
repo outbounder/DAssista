@@ -1,79 +1,54 @@
 package haxe.org.dassista;
 
-import haxe.org.dassista.pdml.APDMLProcessor;
-import haxe.org.dassista.pdml.ApdmlModuleFactory;
-import haxe.org.dassista.pdml.IApdmlModule;
-import haxe.org.dassista.pdml.IApdmlModuleContext;
-
+import haxe.org.dassista.module.ActionPdml;
+import haxe.org.dassista.multicore.AbstractModule;
+import haxe.org.dassista.multicore.IMultiModule;
+import haxe.org.dassista.multicore.IMultiModuleContext;
+import haxe.org.dassista.multicore.MultiModuleFactory;
+import haxe.org.dassista.multicore.MultiModuleContextFactory;
 
 import haxe.Log;
 import neko.Sys;
+import haxe.xml.Fast;
+
+import neko.io.File;
+import neko.FileSystem;
 import neko.vm.Loader;
 import neko.vm.Module;
 
 
-class DAssista implements IApdmlModule
+class DAssista extends ActionPdml
 {
-	private var moduleFactory:ApdmlModuleFactory;
-	
-	public function new()
+    public static function main():Bool
 	{
-		this.moduleFactory = new ApdmlModuleFactory(this.getRootPath());
-	}
-	
-	public static function main()
-	{
-		var instance:DAssista = new DAssista();
-		instance.execute(null);
-	}
-	
-	public function execute(context:IApdmlModuleContext):Dynamic
-	{
-		if(this.hasPdmlPath())
-		{
-			var apdmlProcessor:APDMLProcessor = new APDMLProcessor(this.getPdmlPath(),this.getRootPath());
-			try
-			{
-				trace("EXECUTE FINISHED:"+apdmlProcessor.execute(this.moduleFactory.createApdmlModuleContext(this,null)));
-			}
-			catch(error:Dynamic)
-			{
-				trace("ERROR");
-				trace(error);
-			}
-		}
-		else
-			trace("use -pdml %file% switch to execute pdml script");
-	}
-	
-	public function getContext():IApdmlModuleContext
-	{
-		return null;
-	}
-	
-	private function hasPdmlPath():Bool
-	{
-		if(Sys.args()[0] == "-pdml")
-			return true;
-		else
-			return false;
-	}
-	
-	private function getPdmlPath():String
-	{
-		return Sys.args()[1];
-	}
-	
-	private function hasRootPath():Bool
-	{
-		if(Sys.args()[2] == "-root")
-			return true;
-		else
-			return false;
-	}
-	
-	private function getRootPath():String
-	{
-		return this.hasRootPath()?Sys.args()[3]:"./";
+	    var start:Float = Sys.time();
+	    trace("start " + start);
+	    
+	    var globalRoot:String = FileSystem.fullPath(Sys.args()[0]);
+        var instance:DAssista = new DAssista();
+        var compileModules:Bool = Sys.args()[2]=="true"?true:false;
+        
+        // init context
+	    var contextFactory:MultiModuleContextFactory = new MultiModuleContextFactory(instance);
+		var context:IMultiModuleContext = contextFactory.generate(new MultiModuleFactory(globalRoot,compileModules));
+		
+		// retrieve the pdml data
+        var pdmlContent:String = File.getContent(globalRoot+Sys.args()[1]);
+        var xml:Xml = Xml.parse(pdmlContent);
+        var pdml:Fast = new Fast(xml.firstElement());
+        
+        // set initial input values
+        context.hashView("pdml",pdml); // pdml content
+        context.hashView("root",globalRoot); // global root 
+		
+		// create execute
+		var result:Bool = instance.execute(context);
+		if(!result)
+		  trace("execute failed");
+		  
+		var end:Float = Sys.time();
+		trace("end " + end);
+		trace("time "+ (end-start)+ " s");
+		return result;
 	}
 }
