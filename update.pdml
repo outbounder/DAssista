@@ -1,0 +1,6 @@
+<module classname="haxe.org.dassista.module.GitBash" parser="haxe.org.dassista.module.ActionPdml" >
+  <clone target="haxe.org.dassista" />
+  <fetch target="haxe.org.dassista"/>
+  <execute target="haxe.org.dassista" args="status" />
+  <rebase target="haxe.org.dassista"/>
+</module>
