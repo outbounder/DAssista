@@ -23,36 +23,6 @@ class GitBash implements IMultiModule
 		return this.git(context, pdml.att.args);
     }
 	
-	public function rebase(context:IMultiModuleContext):Bool
-	{
-		return this.git(context, "rebase origin/master");
-	}
-	
-	public function fetch(context:IMultiModuleContext):Bool
-	{
-		return this.git(context, "fetch");
-	}
-
-    public function clone(context:IMultiModuleContext):Bool
-    {
-		if(!this.isGit(context))
-			return this.git(context, "clone " + this.getGitURL(context));
-		return true;
-    }
-	
-	public function isGit(context:IMultiModuleContext):Bool
-	{
-		var dir:String = this.getFullDir(context);
-		return FileSystem.kind(dir+"/.git") == FileKind.kdir;
-	}
-	
-	private function getGitURL(context:IMultiModuleContext):String
-	{
-		var pdml:Fast = context.get("pdml");
-		context.getPdmlFactory().parsePdmlClass(pdml.att.target + ".module", context);
-		return context.get("gitURL");
-	}
-	
 	private function getFullDir(context:IMultiModuleContext):String
 	{
 		var pdml:Fast = context.get("pdml");
