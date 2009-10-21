@@ -18,36 +18,38 @@ class ActionPdml implements IMultiModule
     public function execute(context:IMultiModuleContext):Bool
     {        
         var pdml:Fast = context.get("pdml");
-        var module:Dynamic = null;
+        
         
         if(pdml == null)
             throw "can not find pdml instanceof Fast input field";
-              
-        if(pdml.has.classname)
-           module = context.createNekoModule(pdml.att.classname);
+        
+		var module:Dynamic = null;
+        if (pdml.has.classname)
+			module = context.createNekoModule(pdml.att.classname);
+		else
+			module = context.getCaller();
             
         for(action in pdml.elements)
         {
             context.put("pdml", action);
             
+			var actionInstance:IMultiModule = null;
             if(action.has.classname)
-            {
-                var actionInstance:IMultiModule = context.createNekoModule(action.att.classname);
-                if(!actionInstance.execute(context))
-                    return false;
-                    
-                var f = Reflect.field(actionInstance, action.name);
-                if(Reflect.isFunction(f))
-                {
-                    if(!Reflect.callMethod(actionInstance, f, [context]))
-                        return false;
-                }
-                else
-                {
-                    trace('not a possible action '+action.name+" over module "+Type.typeof(module));
-                    return false;
-                }
-            }
+                actionInstance = context.createNekoModule(action.att.classname);
+			else
+				actionInstance = module;
+			
+			var f = Reflect.field(actionInstance, action.name);
+			if(Reflect.isFunction(f))
+			{
+				if(!Reflect.callMethod(actionInstance, f, [context]))
+					return false;
+			}
+			else
+			{
+				trace('not a possible action '+action.name+" over module "+Type.getClass(actionInstance));
+				return false;
+			}
         }
     
         return true;

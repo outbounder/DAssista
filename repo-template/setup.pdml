@@ -1,5 +1,4 @@
-<module>
-	<module classname="haxe.org.dassista.module.Git">
-	   <update tag="HEAD" target="haxe.org.dassista" />
-	</module>
+<module parser="haxe.org.dassista.module.ActionPdml">
+	<update classname="haxe.org.dassista.module.Git"
+    tag="HEAD" target="haxe.org.dassista"/>
 </module>

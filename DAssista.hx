@@ -17,10 +17,10 @@ class DAssista extends PdmlFactory
     {
         super();
     }
+	
     public static function main():Bool
 	{
 	    var start:Float = Sys.time();
-	    trace("start " + start);
 	    
 	    var instance:DAssista = new DAssista();
 	    var globalRoot:String = FileSystem.fullPath(Sys.args()[0]);
@@ -33,11 +33,8 @@ class DAssista extends PdmlFactory
 		var result:Bool = instance.execute(context);
 		if(!result)
 		  trace("execute failed");
-		  
-		trace(context.get("result"));
-		  
+		
 		var end:Float = Sys.time();
-		trace("end " + end);
 		trace("time "+ (end-start)+ " s");
 		return result;
 	}

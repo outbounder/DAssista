@@ -1,5 +1,0 @@
-<module classname="haxe.org.dassista.Config" parser="haxe.org.dassista.module.ActionPdml">
-    <inputGlobals classname="haxe.org.dassista.module.Git">
-        <update target="haxe.org.dassista" />
-    </inputGlobals> 
-</module>

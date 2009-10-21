@@ -38,6 +38,11 @@ class PdmlContext extends AbstractMultiModuleContext
         this._factoryContext.setCompileEnabled(alwaysCompile == true);
         return this.getModuleFactory().createMultiModule(this._factoryContext);
     }
+	
+	public function getPdmlFactory():IMultiModule
+	{
+		return this.createNekoModule("haxe.org.dassista.module.PdmlFactory");
+	}
 
     public function getRootFolder():String
     {
