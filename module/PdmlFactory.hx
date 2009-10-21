@@ -38,10 +38,10 @@ class PdmlFactory implements IMultiModule
     public function execute(context:IMultiModuleContext):Bool
     {       
         var pdmlFullPath:String = context.get("pdml");
-        if(pdmlFullPath.indexOf("\\")!=-1)
-            return this.parsePdmlFile(pdmlFullPath,context);
-        else
+        if(pdmlFullPath.indexOf("\\")==-1)
             return this.parsePdmlClass(pdmlFullPath,context);
+        else
+            return this.parsePdmlFile(pdmlFullPath,context);
         return false;
     }
 }

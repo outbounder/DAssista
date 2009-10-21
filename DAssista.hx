@@ -24,7 +24,7 @@ class DAssista extends PdmlFactory
 	    
 	    var instance:DAssista = new DAssista();
 	    var globalRoot:String = FileSystem.fullPath(Sys.args()[0]);
-        var pdml:String = FileSystem.fullPath(globalRoot+Sys.args()[1]);
+        var pdml:String = Sys.args()[1];
         var compileModules:Bool = Sys.args()[2]=="true"?true:false;
         
         // init context

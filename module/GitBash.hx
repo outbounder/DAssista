@@ -19,7 +19,8 @@ class GitBash implements IMultiModule
 
     public function execute(context:IMultiModuleContext):Bool
     {
-		return this.git(context, context.get("params"));
+		var pdml:Fast = context.get("pdml");
+		return this.git(context, pdml.att.args);
     }
 	
 	public function rebase(context:IMultiModuleContext):Bool
@@ -35,15 +36,14 @@ class GitBash implements IMultiModule
     public function clone(context:IMultiModuleContext):Bool
     {
 		if(!this.isGit(context))
-			//return this.git("git clone " + this.getGitURL(context));
-			trace("asdasd");
+			return this.git(context, "clone " + this.getGitURL(context));
 		return true;
     }
 	
-	private function getTargetClassName(context:IMultiModuleContext):String
+	public function isGit(context:IMultiModuleContext):Bool
 	{
-		var pdml:Fast = context.get("pdml");
-		return pdml.att.target;
+		var dir:String = this.getFullDir(context);
+		return FileSystem.kind(dir+"/.git") == FileKind.kdir;
 	}
 	
 	private function getGitURL(context:IMultiModuleContext):String
@@ -53,24 +53,18 @@ class GitBash implements IMultiModule
 		return context.get("gitURL");
 	}
 	
-	private function isGit(context:IMultiModuleContext,?target:String):Bool
+	private function getFullDir(context:IMultiModuleContext):String
 	{
-		var dir:String = this.getFullDir(context, target);
-		return FileSystem.kind(dir+"/.git") == FileKind.kdir;
-	}
-	
-	private function getFullDir(context:IMultiModuleContext, target:String):String
-	{
-		if (target == null)
-			target = this.getTargetClassName(context);
+		var pdml:Fast = context.get("pdml");
+		var target:String = pdml.att.target;
 		target = target.split(".").join("/");
 		return context.getRootFolder() + target;
 	}
 	
-	private function git(context:IMultiModuleContext, args:String,?target:String):Bool
+	private function git(context:IMultiModuleContext, args:String):Bool
 	{
 		var oldCwd:String = Sys.getCwd();
-        Sys.setCwd(this.getFullDir(context,target));
+        Sys.setCwd(this.getFullDir(context));
         var cmd:String = "git "+args;
         var result:Int = Sys.command(cmd);
         Sys.setCwd(oldCwd);
