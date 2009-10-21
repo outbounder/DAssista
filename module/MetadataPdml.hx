@@ -3,32 +3,28 @@ package haxe.org.dassista.module;
 import haxe.xml.Fast;
 import neko.io.File;
 
-import haxe.org.multicore.neko.AbstractMultiModule;
-import haxe.org.multicore.neko.IMultiModule;
-import haxe.org.multicore.neko.IMultiModuleContext;
+import haxe.org.multicore.IMultiModule;
+import haxe.org.multicore.IMultiModuleContext;
 
-class MetadataPdml extends AbstractMultiModule
+class MetadataPdml implements IMultiModule
 {
-    public static function main():Dynamic
+    public function new()
+    {
+        
+    }
+
+    public static function main():IMultiModule
     {
         return new MetadataPdml();
     }
     
-    public function new()
-    {	
-        super();
-    }
-    
-    public override function execute(context:IMultiModuleContext):Bool
+    public function execute(context:IMultiModuleContext):Bool
     {
-        super.execute(context);
-        
         var pdml:Fast = context.get("pdml"); 
 
         for(entry in pdml.elements)
         {
             context.put(entry.name, entry.innerData);
-            trace(context.get(entry.name));
         }
         
         return true;

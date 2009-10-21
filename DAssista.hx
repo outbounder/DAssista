@@ -1,10 +1,11 @@
 package haxe.org.dassista;
 
 import haxe.org.dassista.module.PdmlFactory;
-import haxe.org.dassista.module.PdmlContext;
-import haxe.org.multicore.neko.IMultiModule;
-import haxe.org.multicore.neko.IMultiModuleContext;
-import haxe.org.multicore.neko.MultiModuleFactory;
+import haxe.org.dassista.PdmlContext;
+import haxe.org.multicore.IMultiModule;
+import haxe.org.multicore.IMultiModuleContext;
+import haxe.org.multicore.neko.NekoMultiModuleFactory;
+import haxe.org.multicore.neko.AbstractNekoMultiModuleFactoryContext;
 
 import neko.Sys;
 import neko.FileSystem;
@@ -12,6 +13,10 @@ import neko.FileSystem;
 
 class DAssista extends PdmlFactory
 {
+    public function new()
+    {
+        super();
+    }
     public static function main():Bool
 	{
 	    var start:Float = Sys.time();
@@ -23,14 +28,8 @@ class DAssista extends PdmlFactory
         var compileModules:Bool = Sys.args()[2]=="true"?true:false;
         
         // init context
-        var moduleFactory:MultiModuleFactory = new MultiModuleFactory(globalRoot,compileModules);
-		var context:PdmlContext = new PdmlContext(instance,moduleFactory);
-
-        // set initial input values
-        context.put("pdml",pdml); // pdml content
-        context.put("root",globalRoot); // global root 
-		
-		// create execute
+		var context:PdmlContext = new PdmlContext(instance,globalRoot,compileModules);
+		context.put("pdml",pdml);
 		var result:Bool = instance.execute(context);
 		if(!result)
 		  trace("execute failed");

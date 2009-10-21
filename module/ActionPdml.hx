@@ -1,20 +1,22 @@
 package haxe.org.dassista.module;
 
 import haxe.xml.Fast;
-import haxe.org.multicore.neko.IMultiModule;
-import haxe.org.multicore.neko.IMultiModuleContext;
+import haxe.org.multicore.IMultiModule;
+import haxe.org.multicore.IMultiModuleContext;
 
-class ActionPdml extends IMultiModule
+class ActionPdml implements IMultiModule
 {
+    public function new()
+    {
+        
+    }
     public static function main():IMultiModule
     {
         return new ActionPdml();
     }
 
-    public override function execute(context:IMultiModuleContext):Bool
-    {
-        super.execute(context);
-        
+    public function execute(context:IMultiModuleContext):Bool
+    {        
         var pdml:Fast = context.get("pdml");
         var module:Dynamic = null;
         
@@ -22,7 +24,7 @@ class ActionPdml extends IMultiModule
             throw "can not find pdml instanceof Fast input field";
               
         if(pdml.has.classname)
-           module = context.createMultiModule(pdml.att.classname);
+           module = context.createNekoModule(pdml.att.classname);
             
         for(action in pdml.elements)
         {
@@ -30,8 +32,7 @@ class ActionPdml extends IMultiModule
             
             if(action.has.classname)
             {
-                trace("execute "+action.att.classname);
-                var actionInstance:IMultiModule = context.createMultiModule(action.att.classname);
+                var actionInstance:IMultiModule = context.createNekoModule(action.att.classname);
                 if(!actionInstance.execute(context))
                     return false;
                     
