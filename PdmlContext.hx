@@ -16,10 +16,13 @@ class PdmlContext extends AbstractMultiModuleContext
     
     public function new(caller:IMultiModule, rootFolder:String, ?alwaysCompile:Bool)
     {
-        super(caller,new NekoMultiModuleFactory()); // pushing so isn't very cool, but it is the `heard beat`...
-        this._hash = new Hash();
+        super(caller,new NekoMultiModuleFactory());
+        
         this._factoryContext = new AbstractNekoMultiModuleFactoryContext();
         this._factoryContext.setRootFolder(rootFolder);        
+		
+		this._hash = new Hash();
+		
         this.alwaysCompile = alwaysCompile;
         this.rootFolder = rootFolder;
     }
@@ -58,6 +61,7 @@ class PdmlContext extends AbstractMultiModuleContext
         
         var parser:IMultiModule = this.createNekoModule(pdml.att.parser);
         this.put("pdml", pdml);
+		this.put("pdml-path", fullPath);
         return parser.execute(this);
     }
 	
@@ -75,5 +79,14 @@ class PdmlContext extends AbstractMultiModuleContext
 			target = target.split(".").join("/");  // it is class name path style, convert to file system.
 			
 		return this.rootFolder + target; // return always with root if not a full path
+	}
+	
+	public function getClassPath(target:String):String
+	{
+		if (target.indexOf(this.rootFolder) != -1) 
+			target = target.split(this.rootFolder)[1]; // remove the root folder if possible
+		if (target.indexOf(":") != -1)
+			throw "can not convert full path outside of repo to classpath " + target;
+		return target.split("/").join(".");
 	}
 }

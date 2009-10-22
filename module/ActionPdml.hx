@@ -19,7 +19,6 @@ class ActionPdml implements IMultiModule
     {        
         var pdml:Fast = context.get("pdml");
         
-        
         if(pdml == null)
             throw "can not find pdml instanceof Fast input field";
         
