@@ -19,31 +19,36 @@ class FileSys implements IMultiModule
 	
 	public function execute(context:IMultiModuleContext):Bool
 	{
-		trace("TODO implement generic FileSys.execute");
-		return true;
+		var pdml:Fast = context.get("pdml");
+		var target:String = context.getRealPath(context,pdml.att.target);
+		var oldCwd:String = Sys.getCwd();
+        Sys.setCwd(target);
+        var result:Int = Sys.command(pdml.att.cmd);
+        Sys.setCwd(oldCwd);
+        return result == 0;
 	}
 	
 	public function copy(context:IMultiModuleContext):Bool
 	{
 		var pdml:Fast = context.get("pdml");
-		var destination:String = this.getRealpath(context,pdml.att.dest);
+		var destination:String = context.getRealPath(pdml.att.dest);
+		var src:String = context.getRealPath(pdml.att.src);
 		var oldCwd:String = Sys.getCwd();
         Sys.setCwd(destination);
-        var cmd:String = 'xcopy "' + this.getRealpath(context,pdml.att.target) + '" /e';
+        var cmd:String = 'xcopy "' + src + '" /e';
         var result:Int = Sys.command(cmd);
         Sys.setCwd(oldCwd);
-        return true;
+        return result == 0;
 	}
 	
 	public function del(context:IMultiModuleContext):Bool
 	{
-		trace("TODO implement delete");
-		return true;
-	}
-	
-	private function getRealpath(context:IMultiModuleContext, target:String):String
-	{
-		target = target.split(".").join("/");
-		return context.getRootFolder() + target;
+		var pdml:Fast = context.get("pdml");
+		var target:String = context.getRealPath(pdml.att.target);
+		var oldCwd:String = Sys.getCwd();
+        Sys.setCwd(target);
+        var result:Int = Sys.command('rmdir "' + target + '" /S');
+        Sys.setCwd(oldCwd);
+        return result == 0;
 	}
 }

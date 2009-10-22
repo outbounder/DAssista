@@ -20,21 +20,33 @@ class GitBash implements IMultiModule
     public function execute(context:IMultiModuleContext):Bool
     {
 		var pdml:Fast = context.get("pdml");
-		return this.git(context, pdml.att.args);
+		var target:String = context.getRealPath(pdml.att.target);
+		var args:String = context.get("args").att.args;
+		
+		return this.git(target, args);
     }
 	
-	private function getFullDir(context:IMultiModuleContext):String
+	public function clone(context:IMultiModuleContext):Bool
 	{
 		var pdml:Fast = context.get("pdml");
 		var target:String = pdml.att.target;
-		target = target.split(".").join("/");
-		return context.getRootFolder() + target;
+		
+		if (context.parsePdmlClass(target + ".module"))
+		{
+			var gitCloneURL:String = context.get("gitCloneURL");
+			if (gitCloneURL == null)
+				throw "git clone not defined in " + target + ".module";
+			this.git(context.getRealPath(target), "clone " + gitCloneURL);
+			return true;
+		}
+		else
+			return false;
 	}
 	
-	private function git(context:IMultiModuleContext, args:String):Bool
+	private function git(target:String, args:String):Bool
 	{
 		var oldCwd:String = Sys.getCwd();
-        Sys.setCwd(this.getFullDir(context));
+        Sys.setCwd(target);
         var cmd:String = "git "+args;
         var result:Int = Sys.command(cmd);
         Sys.setCwd(oldCwd);

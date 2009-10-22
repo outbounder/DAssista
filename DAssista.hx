@@ -1,21 +1,20 @@
 package haxe.org.dassista;
 
-import haxe.org.dassista.module.PdmlFactory;
 import haxe.org.dassista.PdmlContext;
 import haxe.org.multicore.IMultiModule;
 import haxe.org.multicore.IMultiModuleContext;
 import haxe.org.multicore.neko.NekoMultiModuleFactory;
 import haxe.org.multicore.neko.AbstractNekoMultiModuleFactoryContext;
+import haxe.xml.Fast;
 
 import neko.Sys;
 import neko.FileSystem;
 
 
-class DAssista extends PdmlFactory
+class DAssista implements IMultiModule
 {
     public function new()
     {
-        super();
     }
 	
     public static function main():Bool
@@ -29,14 +28,23 @@ class DAssista extends PdmlFactory
         
         // init context
 		var context:PdmlContext = new PdmlContext(instance,globalRoot,compileModules);
-		context.put("pdml",pdml);
+		context.put("pdml", pdml);
 		var result:Bool = instance.execute(context);
 		if(!result)
-		  trace("execute failed");
+		  trace("----------- execute failed");
 		
 		var end:Float = Sys.time();
 		trace("time "+ (end-start)+ " s");
 		return result;
+	}
+	
+	public function execute(context:IMultiModuleContext):Bool
+	{
+		var pdml:String = context.get("pdml");
+		if (pdml.indexOf("/") == -1)
+			return context.parsePdmlClass(pdml);
+		else
+			return context.parsePdmlFile(pdml);
 	}
 }
 
