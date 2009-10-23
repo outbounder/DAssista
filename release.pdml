@@ -1,7 +1,0 @@
-<module parser="haxe.org.dassista.module.ActionPdml" >
-  <execute classname="haxe.org.dassista.module.GitBash" 
-    target="haxe.org.dassista" args="" />
-  <execute target="haxe.org.dassista" args="status" />
-  <execute target="haxe.org.dassista" args="fetch" />
-  <execute target="haxe.org.dassista" args="rebase origin/master" />
-</module>

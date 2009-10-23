@@ -20,11 +20,11 @@ class MetadataPdml implements IMultiModule
     
     public function execute(context:IMultiModuleContext):Bool
     {
-        var pdml:Fast = context.get("pdml"); 
+        var pdml:Fast = context.getPdml(); 
 
         for(entry in pdml.elements)
         {
-            context.put(entry.name, entry.innerData);
+            context.set(entry.name, entry.innerData);
         }
         
         return true;

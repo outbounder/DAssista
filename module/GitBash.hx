@@ -19,22 +19,22 @@ class GitBash implements IMultiModule
 
     public function execute(context:IMultiModuleContext):Bool
     {
-		var pdml:Fast = context.get("pdml");
+		var pdml:Fast = context.getPdml();
 		var target:String = context.getRealPath(pdml.att.target);
-		var args:String = context.get("args").att.args;
+		var args:String = pdml.att.args;
 		
 		return this.git(target, args);
     }
 	
 	public function clone(context:IMultiModuleContext):Bool
 	{
-		var pdml:Fast = context.get("pdml");
+		var pdml:Fast = context.getPdml();
 		var target:String = pdml.att.target;
 		var dest:String = "";
 		if(pdml.has.dest)
 			dest = pdml.att.dest;
 		
-		if (context.parsePdmlClass(target + ".module"))
+		if (context.parseTarget(target + ".module"))
 		{
 			var gitCloneURL:String = context.get("gitCloneURL");
 			if (gitCloneURL == null)

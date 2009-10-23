@@ -17,24 +17,24 @@ class ActionPdml implements IMultiModule
 
     public function execute(context:IMultiModuleContext):Bool
     {        
-        var pdml:Fast = context.get("pdml");
+        var pdml:Fast = context.getPdml();
         
         if(pdml == null)
             throw "can not find pdml instanceof Fast input field";
         
 		var module:Dynamic = null;
         if (pdml.has.classname)
-			module = context.createNekoModule(pdml.att.classname);
+			module = context.createMultiModule(pdml.att.classname);
 		else
 			module = context.getCaller();
             
         for(action in pdml.elements)
         {
-            context.put("pdml", action);
+            context.setPdml(action);
             
 			var actionInstance:IMultiModule = null;
             if(action.has.classname)
-                actionInstance = context.createNekoModule(action.att.classname);
+                actionInstance = context.createMultiModule(action.att.classname);
 			else
 				actionInstance = module;
 			
