@@ -56,6 +56,17 @@ class ShellContext implements IMultiModuleContext
 		return instance.execute(targetContext);
 	}
 	
+	public function callTargetModuleMethod(target:String, methodName:String, methodContext:IMultiModuleContext):Bool
+	{
+		var classPath:String = this.getClassPath(target);
+		var instance:IMultiModule = this.createTargetModule(classPath);
+		var f = Reflect.field(instance, methodName);
+		if(Reflect.isFunction(f))
+			return Reflect.callMethod(instance, f, [methodContext]);
+		else
+			throw 'not a possible action '+methodName+" over module "+Type.getClass(instance);
+	}
+	
 	public function createTargetModule(target:String):IMultiModule
 	{
 		var moduleClassPath:String = this.getClassPath(target);
@@ -104,8 +115,9 @@ class ShellContext implements IMultiModuleContext
 			
 		if (target.indexOf("/") == -1)
 			target = target.split(".").join("/");  // it is class name path style, convert to file system.
-			
-		return this._rootFolder + target; // return always with root if not a full path
+		
+		var result:String = this._rootFolder + target;
+		return result.split("/").join("\\"); // return always with root if not a full path
 	}
 	
 	public function getClassPath(target:String):String

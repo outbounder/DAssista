@@ -6,6 +6,10 @@ import haxe.org.dassista.IMultiModuleContext;
 
 class ActionPdml implements IMultiModule
 {
+	private var actionInstance:IMultiModule;
+	private var actionContext:IMultiModuleContext;
+	private var action:Fast;
+	
     public function new()
     {
         
@@ -26,34 +30,43 @@ class ActionPdml implements IMultiModule
         if (pdml.has.classname)
 			module = context.createTargetModule(pdml.att.classname);
 		else
-			module = context.getCaller();
+			module = this;
             
         for(action in pdml.elements)
         {
-			var actionContext:IMultiModuleContext = context.clone();
-            actionContext.set("pdml", action);
+			this.action = action;
+			this.actionContext = context.clone();
+            this.actionContext.set("pdml", action);
 			for (actionArg in action.elements)
-				actionContext.set(actionArg.name, actionArg.innerData);
+				this.actionContext.set(actionArg.name, actionArg.innerData);
             
-			var actionInstance:IMultiModule = null;
-            if(action.has.classname)
-                actionInstance = context.createTargetModule(action.att.classname);
-			else
-				actionInstance = module;
+			this.actionInstance = module;
 			
-			var f = Reflect.field(actionInstance, action.name);
-			if(Reflect.isFunction(f))
-			{
-				if(!Reflect.callMethod(actionInstance, f, [actionContext]))
-					return false;
-			}
+            if(action.has.classname)
+                this.actionInstance = context.createTargetModule(action.att.classname);
+			if (actionInstance == null)
+				throw "can not call action over null action instance for " + action.x.toString();
+				
+			if (action.has.async && action.att.async == "true")
+				return neko.vm.Thread.create(asyncMethodCaller) != null;
 			else
-			{
-				trace('not a possible action '+action.name+" over module "+Type.getClass(actionInstance));
-				return false;
-			}
+				return this.asyncMethodCaller();				
         }
     
         return true;
     }
+	
+	private function asyncMethodCaller():Dynamic
+	{
+		var f = Reflect.field(this.actionInstance, this.action.name);
+		if(Reflect.isFunction(f))
+		{
+			return Reflect.callMethod(actionInstance, f, [this.actionContext]);
+		}
+		else
+		{
+			throw 'not a possible action ' + this.action.name + " over module " + Type.getClass(this.actionInstance);
+			return false;
+		}
+	}
 }
