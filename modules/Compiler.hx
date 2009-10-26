@@ -1,22 +1,16 @@
-package haxe.org.dassista.modules.outbounder;
+package haxe.org.dassista.modules;
 
 import haxe.xml.Fast;
 import neko.Sys;
 import neko.io.Path;
 import neko.FileSystem;
 
-import haxe.org.dassista.Context;
-
-import haxe.org.multicore.IMultiModule;
-import haxe.org.multicore.IMultiModuleContext;
-import haxe.org.multicore.neko.NekoMultiModuleFactory;
-import haxe.org.multicore.neko.NekoMultiModuleFactoryContext;
+import haxe.org.dassista.IMultiModule;
+import haxe.org.dassista.IMultiModuleContext;
 
 class Compiler implements IMultiModule
 {
 	private var startTime:Float;
-	private var _factory:NekoMultiModuleFactory;
-	private var _factoryContext:NekoMultiModuleFactoryContext;
 	
     public function new()
     {
@@ -30,9 +24,6 @@ class Compiler implements IMultiModule
 	public function execute(context:IMultiModuleContext):Bool
 	{
 		this.startTime = Sys.time();
-		
-		this._factory = new NekoMultiModuleFactory();
-		this._factoryContext = new NekoMultiModuleFactoryContext(context.getRootFolder());
 		
 		var target:String = null;
 		var pdml:Fast = context.get("pdml");
@@ -92,7 +83,7 @@ class Compiler implements IMultiModule
 				if (!this.compileDir(dirFullPath+entry+"/", context))
 					return false;
 			}
-			else
+			else if(Path.extension(entry) == "hx")
 			{
 				if (!this.compileModule(dirFullPath+Path.withoutExtension(entry), context))
 					return false;
@@ -108,7 +99,6 @@ class Compiler implements IMultiModule
 		if (classPath == "haxe.org.dassista.modules.outbounder.Compiler")
 			return true;
 
-		this._factoryContext.setModuleUID(classPath);
-		return this._factory.compileMultiModule(this._factoryContext);
+		return context.compileTargetModule(classPath);
 	}
 }

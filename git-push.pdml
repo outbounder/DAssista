@@ -1,4 +1,11 @@
-<module classname="haxe.org.dassista.modules.outbounder.GitBash"
-    parser="haxe.org.dassista.modules.outbounder.ActionPdml">
-    <execute target="haxe.org.dassista" cmd="push origin master" />
+<module classname="haxe.org.dassista.tools.proxy.Git"
+    parser="haxe.org.dassista.modules.parsers.ActionPdml">
+    <execute>
+      <target>haxe.org.dassista</target>
+      <cmd>status</cmd>
+    </execute>
+    <execute>
+      <target>haxe.org.dassista</target>
+      <cmd>push origin master</cmd>
+    </execute>
 </module>

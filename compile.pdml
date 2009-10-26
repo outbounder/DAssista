@@ -1,3 +1,4 @@
-<module classname="haxe.org.dassista.modules.outbounder.Compiler" parser="haxe.org.dassista.modules.outbounder.ActionPdml">
+<module classname="haxe.org.dassista.modules.Compiler" parser="haxe.org.dassista.modules.parsers.ActionPdml">
     <execute target="haxe.org.dassista.modules.*" />
+    <execute target="haxe.org.dassista.tools.*" />
 </module>

@@ -1,8 +1,8 @@
-package haxe.org.dassista.modules.outbounder;
+package haxe.org.dassista.modules.parsers;
 
 import haxe.xml.Fast;
-import haxe.org.multicore.IMultiModule;
-import haxe.org.multicore.IMultiModuleContext;
+import haxe.org.dassista.IMultiModule;
+import haxe.org.dassista.IMultiModuleContext;
 
 class ActionPdml implements IMultiModule
 {
@@ -30,8 +30,10 @@ class ActionPdml implements IMultiModule
             
         for(action in pdml.elements)
         {
-			var actionContext:IMultiModuleContext = context.clone(module);
+			var actionContext:IMultiModuleContext = context.clone();
             actionContext.set("pdml", action);
+			for (actionArg in action.elements)
+				actionContext.set(actionArg.name, actionArg.innerData);
             
 			var actionInstance:IMultiModule = null;
             if(action.has.classname)

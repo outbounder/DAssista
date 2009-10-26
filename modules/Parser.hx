@@ -1,9 +1,7 @@
-package haxe.org.dassista.modules.outbounder;
+package haxe.org.dassista.modules;
 
-import haxe.org.dassista.Context;
-
-import haxe.org.multicore.IMultiModule;
-import haxe.org.multicore.IMultiModuleContext;
+import haxe.org.dassista.IMultiModule;
+import haxe.org.dassista.IMultiModuleContext;
 
 import neko.Sys;
 import neko.FileSystem;
@@ -50,7 +48,7 @@ class Parser implements IMultiModule
         var pdml:Fast = new Fast(xml.firstElement());
         
         var parser:IMultiModule = context.createTargetModule(pdml.att.parser);
-		var parserContext:IMultiModuleContext = context.clone(this);
+		var parserContext:IMultiModuleContext = context.clone();
 		parserContext.set("pdml", pdml);
         return parser.execute(parserContext);
 	}

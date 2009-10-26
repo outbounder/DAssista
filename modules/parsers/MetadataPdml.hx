@@ -1,10 +1,10 @@
-package haxe.org.dassista.modules.outbounder;
+package haxe.org.dassista.modules.parsers;
 
 import haxe.xml.Fast;
 import neko.io.File;
 
-import haxe.org.multicore.IMultiModule;
-import haxe.org.multicore.IMultiModuleContext;
+import haxe.org.dassista.IMultiModule;
+import haxe.org.dassista.IMultiModuleContext;
 
 class MetadataPdml implements IMultiModule
 {
@@ -20,7 +20,10 @@ class MetadataPdml implements IMultiModule
     
     public function execute(context:IMultiModuleContext):Bool
     {
-        var pdml:Fast = context.getPdml(); 
+        var pdml:Fast = context.get("pdml"); 
+		
+		if(pdml == null)
+            throw "can not find pdml instanceof Fast input field";
 
         for(entry in pdml.elements)
         {
