@@ -1,3 +1,0 @@
-<module classname="haxe.org.dassista.module.GitBash"  parser="haxe.org.dassista.module.ActionPdml">
-    <clone target="haxe.org.dassista" />
-</module>

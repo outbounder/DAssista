@@ -1,4 +1,4 @@
-package haxe.org.dassista.module;
+package haxe.org.dassista.modules.outbounder;
 
 import haxe.org.multicore.IMultiModule;
 import haxe.org.multicore.IMultiModuleContext;
@@ -16,25 +16,25 @@ class FileSys implements IMultiModule
 	public function new()
 	{
 		// TODO this should be made to support not only windows platforms...
-		
 	}
 	
 	public function execute(context:IMultiModuleContext):Bool
 	{
-		var pdml:Fast = context.getPdml();
+		var pdml:Fast = context.get("pdml");
+		// TODO this workaround shouldn't be here at all.
 		if(pdml.has.tools)
 			Sys.putEnv("PATH", Sys.getEnv("PATH") + ";" + context.getRealPath(pdml.att.tools)+"\\");
 		var target:String = context.getRootFolder();
 		if (pdml.has.target)
 			target = context.getRealPath(pdml.att.target);
-		var args:String = pdml.att.args;
-		return this.cmd(target, args);
+		var cmd:String = pdml.att.cmd;
+		return this.cmd(target, cmd);
 	}
 	
 	public function copy(context:IMultiModuleContext):Bool
 	{
-		var pdml:Fast = context.getPdml();
-		
+		var pdml:Fast = context.get("pdml");
+		// what about other os support ?
 		var src:String = context.getRealPath(pdml.att.src);
 		src = StringTools.replace(src, "/", "\\");
 		var dest:String = context.getRealPath(pdml.att.dest);
@@ -56,7 +56,7 @@ class FileSys implements IMultiModule
 	
 	public function clean(context:IMultiModuleContext):Bool
 	{
-		var pdml:Fast = context.getPdml();
+		var pdml:Fast = context.get("pdml");
 		var fullPath:String = context.getRealPath(pdml.att.target);
 		this.cmd(context.getRootFolder(), 'rmdir "' + fullPath + '" /s /q');
 		return this.cmd(context.getRootFolder(), 'mkdir "' + fullPath +'"');

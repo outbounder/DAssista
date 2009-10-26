@@ -1,0 +1,4 @@
+<module classname="haxe.org.dassista.modules.outbounder.GitBash"
+    parser="haxe.org.dassista.modules.outbounder.ActionPdml">
+    <execute target="haxe.org.dassista" cmd="push origin master" />
+</module>

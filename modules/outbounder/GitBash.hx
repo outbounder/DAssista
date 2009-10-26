@@ -1,4 +1,4 @@
-package haxe.org.dassista.module;
+package haxe.org.dassista.modules.outbounder;
 
 import haxe.xml.Fast;
 import neko.Sys;
@@ -19,24 +19,26 @@ class GitBash implements IMultiModule
 
     public function execute(context:IMultiModuleContext):Bool
     {
-		var pdml:Fast = context.getPdml();
+		var pdml:Fast = context.get("pdml");
 		var target:String = context.getRealPath(pdml.att.target);
-		var args:String = pdml.att.args;
+		var cmd:String = pdml.att.cmd;
 		
-		return this.git(target, args);
+		return this.git(target, cmd);
     }
 	
 	public function clone(context:IMultiModuleContext):Bool
 	{
-		var pdml:Fast = context.getPdml();
+		var pdml:Fast = context.get("pdml");
 		var target:String = pdml.att.target;
 		var dest:String = "";
 		if(pdml.has.dest)
 			dest = pdml.att.dest;
 		
-		if (context.parseTarget(target + ".module"))
+		var parserContext:IMultiModuleContext = context.clone(this);
+		parserContext.set("target", target + ".module");
+		if (context.executeTargetModule("haxe.org.dassista.modules.outbounder.Parser",parserContext))
 		{
-			var gitCloneURL:String = context.get("gitCloneURL");
+			var gitCloneURL:String = parserContext.get("gitCloneURL");
 			if (gitCloneURL == null)
 				throw "git clone not defined in " + target + ".module";
 			this.git(context.getRealPath(target), "clone " + gitCloneURL + " " + dest);
@@ -46,12 +48,11 @@ class GitBash implements IMultiModule
 			return false;
 	}
 	
-	private function git(target:String, args:String):Bool
+	private function git(target:String, cmd:String):Bool
 	{
 		var oldCwd:String = Sys.getCwd();
         Sys.setCwd(target);
-        var cmd:String = "git "+args;
-        var result:Int = Sys.command(cmd);
+        var result:Int = Sys.command("git "+cmd);
         Sys.setCwd(oldCwd);
         return result == 0;
 	}

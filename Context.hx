@@ -1,41 +1,46 @@
 package haxe.org.dassista;
 
-import haxe.org.multicore.AbstractMultiModuleContext;
-import haxe.org.multicore.neko.AbstractNekoMultiModuleFactoryContext;
-import haxe.org.multicore.neko.NekoMultiModuleFactory;
 import haxe.org.multicore.IMultiModule;
-
-import haxe.org.dassista.context.ext.ModuleCompiler;
-import haxe.org.dassista.context.ext.PdmlParser;
+import haxe.org.multicore.IMultiModuleContext;
+import haxe.org.multicore.neko.NekoMultiModuleFactory;
+import haxe.org.multicore.neko.NekoMultiModuleFactoryContext;
 
 import neko.io.File;
 import neko.io.Path;
-import haxe.xml.Fast;
 
-class Context extends AbstractMultiModuleContext
+class Context implements IMultiModuleContext
 {
-	private var _rootFolder:String;
-    private var _factoryContext:AbstractNekoMultiModuleFactoryContext;
-    private var _alwaysCompile:Bool;
-	private var _pdml:Fast;
-	private var _target:String;
-	private var _parser:PdmlParser;
-	private var _compiler:ModuleCompiler;
+	private var _caller:IMultiModule;
+	private var _factory:NekoMultiModuleFactory;
+	private var _factoryContext:NekoMultiModuleFactoryContext;
+	
 	private var _hash:Hash<Dynamic>;
+	private var _rootFolder:String;
     
-    public function new(caller:IMultiModule, rootFolder:String, alwaysCompile:Bool)
+    public function new(caller:IMultiModule,rootFolder:String)
     {
-        super(caller,new NekoMultiModuleFactory());
-        
-        this._factoryContext = new AbstractNekoMultiModuleFactoryContext();
-        this._factoryContext.setRootFolder(rootFolder);        
-		this._alwaysCompile = alwaysCompile;
-        this._rootFolder = rootFolder;
-		
-		this._parser = new PdmlParser();
-		this._compiler = new ModuleCompiler();
 		this._hash = new Hash();
+		this._rootFolder = rootFolder;
+		
+		this._factory = new NekoMultiModuleFactory();
+		this._factoryContext = new NekoMultiModuleFactoryContext();
+        this._factoryContext.setRootFolder(rootFolder);
     }
+	
+	public function clone(caller:IMultiModule):IMultiModuleContext
+	{
+		return new Context(caller, this._rootFolder);
+	}
+	
+	public function getRootFolder():String
+	{
+		return this._rootFolder;
+	}
+	
+	public function getCaller():IMultiModule
+	{
+		return this._caller;
+	}
 	
 	public function get(key:String):Dynamic
 	{
@@ -47,63 +52,21 @@ class Context extends AbstractMultiModuleContext
 		this._hash.set(key, value);
 	}
 	
-	public function getTarget():String
+	public function executeTargetModule(target:String, context:IMultiModuleContext):Bool
 	{
-		return _target;
-	}
-	
-	public function setTarget(value:String):Void
-	{
-		this._target = value;
-	}
-	
-	public function setAlwaysCompile(value:Bool):Void
-	{
-		this._alwaysCompile = value;
-	}
-	
-	public function getAlwaysCompile():Bool
-	{
-		return this._alwaysCompile;
-	}
-    
-    public function getPdml():Fast
-    {
-		return this._pdml;
-    }
-	
-	public function setPdml(value:Fast):Void
-	{
-		this._pdml = value;
-	}
-	
-	public function getRootFolder():String
-    {
-        return this._rootFolder;
-    }
-	
-	public function compileTarget(target:String):Bool
-	{
-		return this._compiler.compileTarget(target, this);
-	}
-	
-	public function parseTarget(target:String):Bool
-	{
-		return this._parser.parseTarget(target, this);
-	}
-	
-	public function compileMultiModule(classPath:String):Bool
-	{
+		var classPath:String = this.getClassPath(target);
 		this._factoryContext.setModuleUID(classPath);
-		return this.getModuleFactory().compileMultiModule(this._factoryContext);
+        var instance:IMultiModule = this._factory.createMultiModule(this._factoryContext);
+		return instance.execute(context);
 	}
-
-    public function createMultiModule(classPath:String):IMultiModule
-    {
-        this._factoryContext.setModuleUID(classPath);
-        this._factoryContext.setCompileEnabled(this._alwaysCompile == true);
-        return this.getModuleFactory().createMultiModule(this._factoryContext);
-    }
+	
+	public function createTargetModule(target:String):IMultiModule
+	{
+		var classPath:String = this.getClassPath(target);
+		this._factoryContext.setModuleUID(classPath);
+		var instance:IMultiModule = this._factory.createMultiModule(this._factoryContext);
+		return instance;
+	}
 	
 	public function getRealPath(target:String):String
 	{
@@ -118,7 +81,8 @@ class Context extends AbstractMultiModuleContext
 	
 	public function getClassPath(target:String):String
 	{
-		if(target.indexOf(".") != -1) // full/relative path with extension is not permitted for class paths.
+		// full/relative path with extension is not permitted for class paths.
+		if(target.indexOf(".") != -1 && (target.indexOf(":") != -1 || target.indexOf("./") != -1)) 
 			target = Path.withoutExtension(target);
 		if(target.indexOf(this._rootFolder) != -1)
 			target = target.split(this._rootFolder)[1]; // remove the root folder

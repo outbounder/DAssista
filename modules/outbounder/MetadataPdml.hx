@@ -1,4 +1,4 @@
-package haxe.org.dassista.module;
+package haxe.org.dassista.modules.outbounder;
 
 import haxe.xml.Fast;
 import neko.io.File;
