@@ -13,6 +13,9 @@ class Git implements IMultiModule
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", context.get("target"));
 		cmdContext.set("cmd", "git "+context.get("cmd"));
-		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+		var result:Bool = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+		if (!result)
+			trace("cmd:" + context.get("cmd") + " target:" + context.get("target"));
+		return result;
 	}
 }
