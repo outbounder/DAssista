@@ -8,6 +8,8 @@ import haxe.org.multicore.IMultiModuleContext;
 
 class GitBash implements IMultiModule
 {
+	private var keys:Array<String>;
+	
     public function new()
     {
         
@@ -19,15 +21,18 @@ class GitBash implements IMultiModule
 
     public function execute(context:IMultiModuleContext):Bool
     {
+		this.bootGit(context);
+		
 		var pdml:Fast = context.get("pdml");
 		var target:String = context.getRealPath(pdml.att.target);
 		var cmd:String = pdml.att.cmd;
-		
 		return this.git(target, cmd);
     }
 	
 	public function clone(context:IMultiModuleContext):Bool
 	{
+		this.bootGit(context);
+		
 		var pdml:Fast = context.get("pdml");
 		var target:String = pdml.att.target;
 		var dest:String = "";
@@ -55,5 +60,18 @@ class GitBash implements IMultiModule
         var result:Int = Sys.command("git "+cmd);
         Sys.setCwd(oldCwd);
         return result == 0;
+	}
+	
+	private function bootGit(context:IMultiModuleContext):Void
+	{
+		if (!this.git(context.getRootFolder(), "version"))
+		{
+			// download & install git bash msysgit
+		}
+		var parserContext:IMultiModuleContext = context.clone(this);
+		parserContext.set("target", "haxe.org.dassista.local.git-init");
+		if (!context.executeTargetModule("haxe.org.dassista.modules.outbounder.Parser", parserContext))
+			throw "could not initialize git";
+		this.keys = parserContext.get("keys");
 	}
 }

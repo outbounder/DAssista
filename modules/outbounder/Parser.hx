@@ -14,11 +14,9 @@ import haxe.xml.Fast;
 class Parser implements IMultiModule
 {
 	private var startTime:Float;
-	private var target:String;
-	
+
     public function new()
     {
-		this.startTime = Sys.time();
     }
 	
     public static function main():Dynamic
@@ -28,6 +26,7 @@ class Parser implements IMultiModule
 	
 	public function execute(context:IMultiModuleContext):Bool
 	{
+		this.startTime = Sys.time();
 		trace("parsing " + context.get("target"));
 		
 		var result:Bool = this.parseTarget(context.get("target"), context);

@@ -11,6 +11,7 @@ import neko.io.Path;
 class Context implements IMultiModuleContext
 {
 	private var _caller:IMultiModule;
+	
 	private var _factory:NekoMultiModuleFactory;
 	private var _factoryContext:NekoMultiModuleFactoryContext;
 	
@@ -22,9 +23,8 @@ class Context implements IMultiModuleContext
 		this._hash = new Hash();
 		this._rootFolder = rootFolder;
 		
+		this._factoryContext = new NekoMultiModuleFactoryContext(rootFolder);
 		this._factory = new NekoMultiModuleFactory();
-		this._factoryContext = new NekoMultiModuleFactoryContext();
-        this._factoryContext.setRootFolder(rootFolder);
     }
 	
 	public function clone(caller:IMultiModule):IMultiModuleContext

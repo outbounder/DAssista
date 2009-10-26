@@ -20,9 +20,6 @@ class Compiler implements IMultiModule
 	
     public function new()
     {
-		this.startTime = Sys.time();
-		this._factory = new NekoMultiModuleFactory();
-		this._factoryContext = new NekoMultiModuleFactoryContext();
     }
 	
 	public static function main():Dynamic
@@ -32,19 +29,22 @@ class Compiler implements IMultiModule
 	
 	public function execute(context:IMultiModuleContext):Bool
 	{
+		this.startTime = Sys.time();
+		
+		this._factory = new NekoMultiModuleFactory();
+		this._factoryContext = new NekoMultiModuleFactoryContext(context.getRootFolder());
+		
 		var target:String = null;
+		var pdml:Fast = context.get("pdml");
 		if (context.get("target") != null)
 			target = context.get("target");
 		if (context.get("pdml") != null)
-		{
-			var pdml:Fast = context.get("pdml");
 			target = pdml.att.target;
-		}
+
 		if (target == null)
 			throw "can not compile undefined target";
 			
 		trace("compiling " + target);
-		this._factoryContext.setRootFolder(context.getRootFolder());
 		var result:Bool = this.compileTarget(target,context);
 		if(!result)
 		  trace("----------- execute failed");

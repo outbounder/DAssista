@@ -1,0 +1,6 @@
+<module
+    classname="haxe.org.dassista.modules.outbounder.GitInit" 
+    parser="haxe.org.dassista.modules.outbounder.ActionPdml">
+    <install>http://msysgit.googlecode.com/files/Git-1.6.5.1-preview20091022.exe</install>
+    <loadKey>C:\keys\private_rsa_20091009_2.ppk</loadKey>
+</module>
