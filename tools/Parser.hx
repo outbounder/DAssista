@@ -22,21 +22,21 @@ class Parser implements IMultiModule
 		return new Parser();
 	}
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		this.startTime = Sys.time();
 		trace("parsing " + context.get("target"));
 		
-		var result:Bool = this.parseTarget(context.get("target"), context);
+		var result:Dynamic = this.parseTarget(context.get("target"), context);
 		if (!result)
-			trace("----------- execute failed");
+			trace("failed");
 		  
 		var end:Float = Sys.time();
 		trace("time " + (end - this.startTime) + " s");
 		return result;
 	}
 	
-	public function parseTarget(target:String, context:IMultiModuleContext):Bool
+	public function parseTarget(target:String, context:IMultiModuleContext):Dynamic
 	{
 		var fullPath:String = context.getRealPath(target);
 		if (fullPath.lastIndexOf(".pdml") == -1)

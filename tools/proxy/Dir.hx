@@ -10,12 +10,12 @@ class Dir implements IMultiModule
 	public function new() { }
 	public static function main() { return new Dir(); }
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		return false;
 	}
 	
-	public function create(context:IMultiModuleContext):Bool
+	public function create(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("target") == null)
 			throw "target is required";
@@ -31,7 +31,7 @@ class Dir implements IMultiModule
 		return true;
 	}
 	
-	public function clean(context:IMultiModuleContext):Bool
+	public function clean(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("target") == null)
 			throw "target is required";
@@ -41,7 +41,8 @@ class Dir implements IMultiModule
 			var cmdContext:Dynamic = context.clone();
 			cmdContext.set("root", "");
 			cmdContext.set("cmd", "rmdir "+target+" /s /q ");
-			return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+			var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+			return result == 0;
 		}
 		else
 			return true;

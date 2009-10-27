@@ -10,7 +10,7 @@ class WGet implements IMultiModule
 	public function new() { }
 	public static function main() { return new WGet(); }
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", context.get("root"));
@@ -18,7 +18,7 @@ class WGet implements IMultiModule
 		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 	}
 	
-	public function download(context:IMultiModuleContext):Bool
+	public function download(context:IMultiModuleContext):Dynamic
 	{
 		var dest:String = context.getRealPath(context.get("dest"));
 		context.set("root", Path.directory(dest) );

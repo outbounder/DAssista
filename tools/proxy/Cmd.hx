@@ -10,7 +10,7 @@ class Cmd implements IMultiModule
 	public function new() { }
 	public static function main() { return new Cmd(); }
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("root") == null || context.get("cmd") == null)
 			throw "root and cmd are needed";
@@ -18,7 +18,7 @@ class Cmd implements IMultiModule
 		var cmd:String = context.get("cmd");
 		
 		var oldCwd:String = Sys.getCwd();
-		Sys.setCwd(root);
+		Sys.setCwd(root); 
 		var oldPath:String = Sys.getEnv("PATH");
 		var newPath:String  = oldPath + ";" + context.getRealPath("haxe.org.dassista.tools")+"\\"; // to be changed for unix support
 		Sys.putEnv("PATH", newPath); // this shouldn't be here.
@@ -28,6 +28,6 @@ class Cmd implements IMultiModule
 		if (result != 0)
 			trace("root: " + root + " cmd:" + cmd);
 		context.set("result", result);
-		return result == 0;
+		return result;
 	}
 }

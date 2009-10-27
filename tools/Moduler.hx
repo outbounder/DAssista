@@ -14,12 +14,12 @@ class Moduler implements IMultiModule
 		return new Moduler();
 	}
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		return false;
 	}
 	
-	public function initModule(context:IMultiModuleContext):Bool
+	public function initModule(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("target") == null)
 			throw "target required";

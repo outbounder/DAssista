@@ -8,7 +8,7 @@ class Git implements IMultiModule
 	public function new() { }
 	public static function main() { return new Git(); }
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		var gitContext:IMultiModuleContext = context.clone();
 		gitContext.set("target", "haxe.org.dassista.tools.git");
@@ -24,7 +24,7 @@ class Git implements IMultiModule
 		return result;
 	}
 	
-	public function pageant(context:IMultiModuleContext):Bool
+	public function pageant(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", "");

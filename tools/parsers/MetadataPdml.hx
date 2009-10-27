@@ -13,12 +13,12 @@ class MetadataPdml implements IMultiModule
         
     }
 
-    public static function main():IMultiModule
+    public static function main():Dynamic
     {
         return new MetadataPdml();
     }
     
-    public function execute(context:IMultiModuleContext):Bool
+    public function execute(context:IMultiModuleContext):Dynamic
     {
         var pdml:Fast = context.get("pdml"); 
 		

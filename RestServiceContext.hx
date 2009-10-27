@@ -7,7 +7,7 @@ import neko.FileSystem;
 
 class RestServiceContext extends ShellContext
 {
-	public static function main():Bool 
+	public static function main():Dynamic 
 	{
 		trace("dassista restService context v0.1 @"+Web.getCwd());
 		if (Sys.args().length != 0)

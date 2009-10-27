@@ -8,15 +8,15 @@ class GitProbe implements IMultiModule
 {
 	private static var gitInstallLocation:String = "haxe.org.dassista.tools.install.cache.gitInstall";
 	public function new() {} 
-	public static function main():Dynamic { return new GitProbe(); }
+	public static function main() { return new GitProbe(); }
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		throw "not implemneted";
 		return false;
 	}
 	
-	public function probe(context:IMultiModuleContext):Bool
+	public function probe(context:IMultiModuleContext):Dynamic
 	{		
 		if (!this.gitAvailable(context))
 		{
@@ -37,12 +37,12 @@ class GitProbe implements IMultiModule
 			return true;
 	}
 	
-	private function gitDownloaded(context:IMultiModuleContext):Bool
+	private function gitDownloaded(context:IMultiModuleContext):Dynamic
 	{
 		return FileSystem.exists(context.getRealPath(GitProbe.gitInstallLocation));
 	}
 	
-	private function gitAvailable(context:IMultiModuleContext):Bool
+	private function gitAvailable(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", context.getRealPath(""));

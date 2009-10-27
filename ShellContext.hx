@@ -16,13 +16,13 @@ class ShellContext implements IMultiModuleContext
 	private var _cache:Hash<Dynamic>;
 	private var _rootFolder:String;
 	
-	public static function main():Bool 
+	public static function main():Dynamic 
 	{
 		trace("dassista shell context v0.1");
 		if (Sys.args().length == 0)
 			throw "not supported execution, try with module=<moduleClassPath> <module additional args>";
 		
-		var shellInstance:ShellContext = new ShellContext(FileSystem.fullPath(Sys.getCwd()), new Hash(), new Hash());
+		var shellInstance:ShellContext = new ShellContext(Sys.getCwd(), new Hash(), new Hash());
 		for (arg in Sys.args())
 		{
 			shellInstance.set(arg.split("=")[0], arg.split("=")[1]);
@@ -71,14 +71,14 @@ class ShellContext implements IMultiModuleContext
 		this._hash.set(key, value);
 	}
 	
-	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Bool
+	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic
 	{
 		var classPath:String = this.getClassPath(target);
 		var instance:IMultiModule = this.createTargetModule(classPath);
 		return instance.execute(targetContext);
 	}
 	
-	public function callTargetModuleMethod(target:String, methodName:String, methodContext:IMultiModuleContext):Bool
+	public function callTargetModuleMethod(target:String, methodName:String, methodContext:IMultiModuleContext):Dynamic
 	{
 		var classPath:String = this.getClassPath(target);
 		var instance:IMultiModule = this.createTargetModule(classPath);
@@ -139,9 +139,15 @@ class ShellContext implements IMultiModuleContext
 			
 		if (target.indexOf("/") == -1)
 			target = target.split(".").join("/");  // it is class name path style, convert to file system.
-		
+		if (target.indexOf("./") == 0)
+			target = target.substr(2);
 		var result:String = this._rootFolder + target;
-		return result.split("/").join("\\"); // return always with root if not a full path
+		result = result.split("/").join("\\"); // return always with root if not a full path
+		// remove last slash
+		if (result.charAt(result.length - 1) == "\\") // to be changed
+			return result.substr(0, result.length - 1);
+		else
+			return result;
 	}
 	
 	public function getClassPath(target:String):String

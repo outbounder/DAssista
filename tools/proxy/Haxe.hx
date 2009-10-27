@@ -11,7 +11,7 @@ class Haxe implements IMultiModule
 	public function new() { }
 	public static function main() { return new Haxe(); }
 	
-	public function execute(context:IMultiModuleContext):Bool
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", context.get("root"));
@@ -19,7 +19,7 @@ class Haxe implements IMultiModule
 		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 	}
 	
-	public function neko(context:IMultiModuleContext):Bool
+	public function neko(context:IMultiModuleContext):Dynamic
 	{
 		context.set("platform", "neko");
 		if (context.get("target") == null)
@@ -36,13 +36,13 @@ class Haxe implements IMultiModule
 		}
 	}
 	
-	public function php(context:IMultiModuleContext):Bool
+	public function php(context:IMultiModuleContext):Dynamic
 	{
 		context.set("platform", "php");
 		return this.haxe(context);
 	}
 	
-	private function haxeThisDir(context:IMultiModuleContext):Bool
+	private function haxeThisDir(context:IMultiModuleContext):Dynamic
 	{
 		var target:String = context.get("target");
 		var dirFullPath:String = context.getRealPath(target);
@@ -67,7 +67,7 @@ class Haxe implements IMultiModule
 		return true;
 	}
 	
-	private function haxe(context:IMultiModuleContext):Bool
+	private function haxe(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();
 		switch(context.get("platform"))
@@ -83,7 +83,8 @@ class Haxe implements IMultiModule
 				
 				cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe -php " + target + " --php-front " + context.get("front") + " -main " + context.get("root") + "." + context.get("main"));
-				return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+				return result == 0;
 			};
 			case "neko":
 			{
@@ -93,7 +94,8 @@ class Haxe implements IMultiModule
 		
 				cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe  -neko " + moduleDir + "\\" + moduleName + ".n -main " + target);
-				return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+				return result == 0;
 			};
 		}
 		trace("not recognized platform " + context.get("platform"));
