@@ -1,7 +1,0 @@
-<module classname="haxe.org.dassista.tools.proxy.Git"
-    parser="haxe.org.dassista.modules.parsers.ActionPdml">
-    <execute>
-      <target>haxe.org.dassista</target>
-      <cmd>push origin master</cmd>
-    </execute>
-</module>

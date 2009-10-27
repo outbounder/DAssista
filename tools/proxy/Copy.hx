@@ -27,13 +27,18 @@ class Copy implements IMultiModule
 		{
 			var excludes:String = "";
 			if (context.get("exclude") != null)
-				excludes = "/XD " + context.get("exclude");
+				excludes += "/XD " + context.get("exclude");
+			if (context.get("excludeFiles") != null)
+				excludes += "/XF " + context.get("excludeFiles")+" ";
+			if (context.get("excludeDirs") != null)
+				excludes += "/XD " + context.get("excludeDirs")+" ";
+			
 			// if name presented then it will be appened. hopefully this should be named something else
 			if (context.get("name") == null)
 			{
 				var cmdContext:IMultiModuleContext = context.clone();
 				cmdContext.set("root", "");
-				cmdContext.set("cmd", "robocopy " + src + " " + dest+" "+excludes+" /e");
+				cmdContext.set("cmd", "robocopy " + src + " " + dest+" "+excludes+" /e /NFL /NDL /NJH /NJS");
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 				return result == 1;
 			}
@@ -42,7 +47,7 @@ class Copy implements IMultiModule
 				var files:String = context.get("name");
 				var cmdContext:IMultiModuleContext = context.clone();
 				cmdContext.set("root", "");
-				cmdContext.set("cmd", "robocopy " + src + " " + dest+" "+files+" "+excludes);
+				cmdContext.set("cmd", "robocopy " + src + " " + dest+" "+files+" "+excludes+" /NFL /NDL /NJH /NJS");
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 				return result == 1;
 			}

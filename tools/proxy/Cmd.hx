@@ -25,9 +25,6 @@ class Cmd implements IMultiModule
 		var result:Int = Sys.command(cmd);
 		Sys.setCwd(oldCwd);
 		Sys.putEnv("PATH", oldPath);
-		if (result != 0)
-			trace("root: " + root + " cmd:" + cmd);
-		context.set("result", result);
 		return result;
 	}
 }
