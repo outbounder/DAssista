@@ -1,4 +1,4 @@
-package haxe.org.dassista.tools.proxy;
+package haxe.org.dassista.tools.install;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;

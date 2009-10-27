@@ -51,7 +51,7 @@ class Haxe implements IMultiModule
 		var entries:Array<String> = FileSystem.readDirectory(dirFullPath);
 		for (entry in entries)
 		{
-			if (FileSystem.kind(dirFullPath+entry) == FileKind.kdir)
+			if (FileSystem.kind(dirFullPath+"\\"+entry) == FileKind.kdir)
 			{
 				context.set("target", target + entry + ".");
 				if (!this.haxeThisDir(context))
