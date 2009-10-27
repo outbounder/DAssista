@@ -27,10 +27,10 @@ class Compiler implements IMultiModule
 		
 		var target:String = null;
 		var pdml:Fast = context.get("pdml");
-		if (context.get("target") != null)
-			target = context.get("target");
 		if (context.get("pdml") != null)
 			target = pdml.att.target;
+		if (context.get("target") != null)
+			target = context.get("target");
 
 		if (target == null)
 			throw "can not compile undefined target";

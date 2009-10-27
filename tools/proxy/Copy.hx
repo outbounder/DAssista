@@ -17,8 +17,12 @@ class Copy implements IMultiModule
 		
 		var src:String = context.getRealPath(context.get("src"));
 		var dest:String = context.getRealPath(context.get("dest"));
+		if (context.get("name") != null)
+		{
+			src = src + "//" + context.get("name");
+			dest = dest + "//" + context.get("name");
+		}
 		File.copy(src, dest);
-		
 		return true;
 	}
 }

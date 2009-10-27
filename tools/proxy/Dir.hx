@@ -20,9 +20,30 @@ class Dir implements IMultiModule
 		if (context.get("target") == null)
 			throw "target is required";
 			
-		var root:String = context.getRealPath(context.get("target"));
-		if (!FileSystem.exists(root))
-			Sys.command('mkdir "' + root + '"');
+		var target:String = context.getRealPath(context.get("target"));
+		if (!FileSystem.exists(target))
+		{
+			var cmdContext:Dynamic = context.clone();
+			cmdContext.set("root", "");
+			cmdContext.set("cmd", "mkdir "+target);
+			return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+		}
 		return true;
+	}
+	
+	public function clean(context:IMultiModuleContext):Bool
+	{
+		if (context.get("target") == null)
+			throw "target is required";
+		var target:String = context.getRealPath(context.get("target"));
+		if (FileSystem.exists(target))
+		{
+			var cmdContext:Dynamic = context.clone();
+			cmdContext.set("root", "");
+			cmdContext.set("cmd", "rmdir "+target+" /s /q ");
+			return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+		}
+		else
+			return true;
 	}
 }

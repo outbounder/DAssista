@@ -12,33 +12,12 @@ class Cmd implements IMultiModule
 	
 	public function execute(context:IMultiModuleContext):Bool
 	{
+		if (context.get("root") == null || context.get("cmd") == null)
+			throw "root and cmd are needed";
 		var root:String = context.getRealPath(context.get("root"));
-		
-		if (context.get("exec") != null) // special case for execution of any kind of downloaded classPath like resource
-		{
-			var oldCwd:String = Sys.getCwd();
-			if (!FileSystem.exists(root))
-				Sys.command('mkdir "'+root+'"');
-			Sys.setCwd(root);
-			var result:Int = -1;
-			var exec:String = context.getRealPath(context.get("exec"));
-			
-			// to be changed for unix support
-			if (!FileSystem.exists(exec + ".exe"))
-			{
-				if (FileSystem.exists(exec))
-					FileSystem.rename(exec, exec + ".exe");
-			}
-			result = Sys.command(exec + ".exe"); 
-			
-			Sys.setCwd(oldCwd);
-			return result == 0;
-		}
-		
 		var cmd:String = context.get("cmd");
+		
 		var oldCwd:String = Sys.getCwd();
-		if (!FileSystem.exists(root))
-			Sys.command('mkdir "'+root+'"');
 		Sys.setCwd(root);
 		var oldPath:String = Sys.getEnv("PATH");
 		var newPath:String  = oldPath + ";" + context.getRealPath("haxe.org.dassista.tools")+"\\"; // to be changed for unix support
