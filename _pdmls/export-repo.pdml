@@ -1,7 +1,7 @@
-<module parser="haxe.org.dassista.modules.outbounder.ActionPdml">
-    <execute classname="haxe.org.dassista.tools.proxy.Clean">
+<module parser="haxe.org.dassista.tools.parsers.ActionPdml">
+    <clean classname="haxe.org.dassista.tools.proxy.Dir">
         <target>releases.org.dassista</target>
-    </execute>
+    </clean>
     <execute classname="haxe.org.dassista.tools.proxy.Copy">
         <src>haxe.org.dassista</src>
         <dest>releases.org.dassista.repo.haxe.org.dassista</dest>
@@ -10,10 +10,5 @@
     <execute classname="haxe.org.dassista.tools.proxy.Copy">
         <src>./*.bat</src>
         <dest>releases.org.dassista.repo</dest>
-    </execute>
-    <execute classname="haxe.org.dassista.tools.proxy.Zip">
-        <src>releases.org.dassista.repo</src>
-        <dest>releases.ord.dassista</dest>
-        <outputname>repo-{version}</outputname>
     </execute>
 </module>

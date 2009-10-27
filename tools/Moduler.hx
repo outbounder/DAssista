@@ -1,9 +1,9 @@
-package haxe.org.dassista.modules;
+package haxe.org.dassista.tools;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
 
-class Module implements IMultiModule
+class Moduler implements IMultiModule
 {
 	public function new()
     {
@@ -11,7 +11,7 @@ class Module implements IMultiModule
 	
 	public static function main():Dynamic
 	{
-		return new Module();
+		return new Moduler();
 	}
 	
 	public function execute(context:IMultiModuleContext):Bool

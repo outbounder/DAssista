@@ -1,4 +1,4 @@
-package haxe.org.dassista.modules;
+package haxe.org.dassista.tools;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;

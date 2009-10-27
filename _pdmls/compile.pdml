@@ -1,4 +1,5 @@
-<module classname="haxe.org.dassista.modules.Compiler" parser="haxe.org.dassista.modules.parsers.ActionPdml">
-    <execute target="haxe.org.dassista.modules.*" />
-    <execute target="haxe.org.dassista.tools.*" />
-</module>
+<pdml parser="haxe.org.dassista.tools.parsers.ActionPdml">
+    <neko classname="haxe.org.dassista.tools.proxy.Haxe">
+      <target>haxe.org.dassista.tools.*</target>
+    </neko>
+</pdml>

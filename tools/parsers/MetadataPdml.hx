@@ -1,4 +1,4 @@
-package haxe.org.dassista.modules.parsers;
+package haxe.org.dassista.tools.parsers;
 
 import haxe.xml.Fast;
 import neko.io.File;
