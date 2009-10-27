@@ -1,8 +1,0 @@
-<module classname="haxe.org.dassista.modules.outbounder.FileSys" parser="haxe.org.dassista.modules.outbounder.ActionPdml" >
-    <clean target="releases.org.dassista" />
-    <copy src="haxe.org.dassista" dest="releases.org.dassista.repo.haxe.org.dassista" exclude="haxe.org.dassista.release-git-exclude" />
-    <copy src="haxe.org.multicore" dest="releases.org.dassista.repo.haxe.org.multicore" exclude="haxe.org.dassista.release-git-exclude" />
-    <copy src="tools" dest="releases.org.dassista.repo.tools" />
-    <copy src="./*.bat" dest="releases.org.dassista.repo" />
-    <execute target="releases.org.dassista.repo" cmd="zip -r -q ../repo.zip *" tools="./tools/" />
-</module>

@@ -1,8 +1,0 @@
-<module
-    classname="haxe.org.dassista.modules.outbounder.GitInit" 
-    parser="haxe.org.dassista.modules.outbounder.ActionPdml">
-    <wget classname="haxe.org.dassista.tools.outbounder.Proxy" 
-      target="downloads.git.gitSetup">http://msysgit.googlecode.com/files/Git-1.6.5.1-preview20091022.exe</wget>
-    <execute classname="haxe.org.dassista.tools.outbounder.Proxy" target="downloads.git.gitSetup" />
-    <pageant classname="haxe.org.dassista.tools.outbounder.Proxy">C:\keys\private_rsa_20091009_2.ppk</loadKey>
-</module>
