@@ -19,12 +19,15 @@ class ShellContext implements IMultiModuleContext
 	public static function main():Bool 
 	{
 		trace("dassista shell context v0.1");
+		if (Sys.args().length == 0)
+			throw "not supported execution, try with module=<moduleClassPath> <module additional args>";
+			
 		var shellInstance:ShellContext = new ShellContext(FileSystem.fullPath(Sys.args()[0]), new Hash(), new Hash());
 		for (arg in Sys.args())
 		{
 			shellInstance.set(arg.split("=")[0], arg.split("=")[1]);
 		}
-		return shellInstance.executeTargetModule(Sys.args()[1],shellInstance);
+		return shellInstance.executeTargetModule(Sys.args()[1].split("=")[1],shellInstance); // TODO better get the Sys.args()
 	}
 	
 	public function new(rootFolder:String,cache:Hash<Dynamic>,hash:Hash<Dynamic>)
@@ -91,7 +94,7 @@ class ShellContext implements IMultiModuleContext
 		{
 			trace("module can not be created:" + target);
 			trace("------- stack -----------");
-			trace(e);
+			throw e;
 			return null;
 		}
 	}
@@ -100,11 +103,13 @@ class ShellContext implements IMultiModuleContext
 	{
 		var moduleDir:String = this.getRealPath(Path.withoutExtension(moduleClassPath)); // only rootFolder + the directory of the module 
 		var moduleName:String = Path.extension(moduleClassPath); // only module name
+
 		var oldCwd:String = Sys.getCwd();
 		Sys.setCwd(moduleDir);
 		var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath;
 		var result:Int = Sys.command(cmd);
 		Sys.setCwd(oldCwd);
+		
 		return result == 0;
 	}
 	
@@ -125,12 +130,12 @@ class ShellContext implements IMultiModuleContext
 		// full/relative path with extension is not permitted for class paths.
 		if(target.indexOf(".") != -1 && (target.indexOf(":") != -1 || target.indexOf("./") != -1)) 
 			target = Path.withoutExtension(target);
-		if(target.indexOf(this._rootFolder) != -1)
+		if (target.indexOf(this._rootFolder) != -1)
 			target = target.split(this._rootFolder)[1]; // remove the root folder
 		if (target.indexOf("./") == 0)
 			target = target.substr(3, target.length - 2);
 		if (target.indexOf(":") != -1)
 			throw "can not convert full path outside of repo to classpath " + target;
-		return target.split("/").join(".");
+		return target.split("\\").join(".");
 	}
 }

@@ -55,7 +55,7 @@ class Compiler implements IMultiModule
 		else
 		{
 			// compile exactly target
-			return this.compileModule(target, context);
+			return context.compileTargetModule(target);
 		}
 	}
 	
@@ -63,42 +63,21 @@ class Compiler implements IMultiModule
 	{
 		var dirFullPath:String = context.getRealPath(target);
 		
-		// clear all compiled modules
-		var entries:Array<String> = FileSystem.readDirectory(dirFullPath);
-		for (entry in entries)
-		{
-			if (Path.extension(dirFullPath + entry) == "n" && entry != "Compiler.n")
-			{
-				FileSystem.deleteFile(dirFullPath + entry);
-				continue;
-			}
-		}
-		
 		// compile all
 		var entries:Array<String> = FileSystem.readDirectory(dirFullPath);
 		for (entry in entries)
 		{
 			if (FileSystem.kind(dirFullPath+entry) == FileKind.kdir)
 			{
-				if (!this.compileDir(dirFullPath+entry+"/", context))
+				if (!this.compileDir(target+entry+".", context))
 					return false;
 			}
 			else if(Path.extension(entry) == "hx")
 			{
-				if (!this.compileModule(dirFullPath+Path.withoutExtension(entry), context))
+				if (!context.compileTargetModule(target+Path.withoutExtension(entry)))
 					return false;
 			}
 		}
 		return true;
-	}
-	
-	private function compileModule(target:String, context:IMultiModuleContext):Bool
-	{
-		// do not self compile
-		var classPath:String = context.getClassPath(target);
-		if (classPath == "haxe.org.dassista.modules.outbounder.Compiler")
-			return true;
-
-		return context.compileTargetModule(classPath);
 	}
 }
