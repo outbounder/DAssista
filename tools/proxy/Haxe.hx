@@ -74,15 +74,15 @@ class Haxe implements IMultiModule
 		{
 			case "php":
 			{
-				var target:String = context.getRealPath(context.get("target"));
+				var dest:String = context.getRealPath(context.get("dest"));
 				// create the target directory
 				var dirContext:IMultiModuleContext = context.clone();
-				dirContext.set("target", target);
+				dirContext.set("target", dest);
 				if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
 					return false;
 				
 				cmdContext.set("root", "");
-				cmdContext.set("cmd",  "haxe -php " + target + " --php-front " + context.get("front") + " -main " + context.get("root") + "." + context.get("main"));
+				cmdContext.set("cmd",  "haxe -php " + dest + " --php-front " + context.get("front") + " -main " + context.get("target"));
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 				return result == 0;
 			};

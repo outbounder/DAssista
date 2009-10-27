@@ -1,7 +1,4 @@
 <pdml parser="haxe.org.dassista.tools.parsers.ActionPdml">
-    <execute classname="haxe.org.dassista.tools.Parser">
-      <target>haxe.org.dassista._pdmls.compile</target>
-    </execute>
     <clean classname="haxe.org.dassista.tools.proxy.Dir">
       <target>releases.org.dassista</target>
     </clean>

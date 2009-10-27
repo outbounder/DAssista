@@ -12,10 +12,9 @@ class Zip implements IMultiModule
 	
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
-		//zip -r mydir mydir
 		var cmdContext:IMultiModuleContext = context.clone();
-		cmdContext.set("root", context.get("dest"));
-		cmdContext.set("cmd", "zip -r " + context.get("name") + " " + context.getRealPath(context.get("src"))+" -q");
+		cmdContext.set("root", context.get("src"));
+		cmdContext.set("cmd", "zip -r -q " + context.getRealPath(context.get("dest"))+"\\"+context.get("name") + " *");
 		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext) == 0;
 	}
 }
