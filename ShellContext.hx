@@ -21,13 +21,32 @@ class ShellContext implements IMultiModuleContext
 		trace("dassista shell context v0.1");
 		if (Sys.args().length == 0)
 			throw "not supported execution, try with module=<moduleClassPath> <module additional args>";
-			
-		var shellInstance:ShellContext = new ShellContext(FileSystem.fullPath(Sys.args()[0]), new Hash(), new Hash());
+		
+		var shellInstance:ShellContext = new ShellContext(FileSystem.fullPath(Sys.getCwd()), new Hash(), new Hash());
 		for (arg in Sys.args())
 		{
 			shellInstance.set(arg.split("=")[0], arg.split("=")[1]);
 		}
-		return shellInstance.executeTargetModule(Sys.args()[1].split("=")[1],shellInstance); // TODO better get the Sys.args()
+		
+		var result:Bool = false;
+		if(shellInstance.getSysArg("method") == null)
+			result = shellInstance.executeTargetModule(shellInstance.getSysArg("module"), shellInstance); 
+		else
+			result = shellInstance.callTargetModuleMethod(shellInstance.getSysArg("module"), shellInstance.getSysArg("method"), shellInstance); 
+		if (result == false)
+			trace("shell execution failed");
+		return result;
+	}
+	
+	private function getSysArg(name:String):String
+	{
+		for (arg in Sys.args())
+		{
+			var parts:Array < String > = arg.split("=");
+			if (parts[0] == name)
+				return parts[1];
+		}
+		return null;
 	}
 	
 	public function new(rootFolder:String,cache:Hash<Dynamic>,hash:Hash<Dynamic>)

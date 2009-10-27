@@ -29,7 +29,10 @@ class RestServiceContext extends ShellContext
 		{
 			this.set(param, Web.getParams().get(param));
 		}
-		this.executeTargetModule(Web.getParams().get("module"), this);
+		if(Web.getParams().get("method") == null)
+			this.executeTargetModule(Web.getParams().get("module"), this);
+		else
+			this.callTargetModuleMethod(Web.getParams().get("module"), Web.getParams().get("method"), this);
 	}
 	
 	public function new(rootFolder:String,cache:Hash<Dynamic>,hash:Hash<Dynamic>)

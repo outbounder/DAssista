@@ -47,7 +47,8 @@ class ActionPdml implements IMultiModule
 			if (actionInstance == null)
 				throw "can not call action over null action instance for " + action.x.toString();
 				
-			return this.asyncMethodCaller();				
+			if (!this.asyncMethodCaller())
+				return false;
         }
     
         return true;

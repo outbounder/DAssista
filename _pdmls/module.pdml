@@ -1,5 +1,5 @@
 <module parser="haxe.org.dassista.module.MetadataPdml">
     <gitCloneURL>git://github.com/outbounder/DAssista.git</gitCloneURL>
-    <author>outbounder</author>
-    <version>0.1</version>
+    <author>Boris Filipov</author>
+    <version>0.0.1</version>
 </module>

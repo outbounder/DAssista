@@ -5,10 +5,10 @@ import haxe.org.dassista.IMultiModuleContext;
 
 import neko.io.Path;
 
-class Wget implements IMultiModule
+class WGet implements IMultiModule
 {
 	public function new() { }
-	public static function main() { return new Wget(); }
+	public static function main() { return new WGet(); }
 	
 	public function execute(context:IMultiModuleContext):Bool
 	{
