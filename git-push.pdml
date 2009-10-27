@@ -2,10 +2,6 @@
     parser="haxe.org.dassista.modules.parsers.ActionPdml">
     <execute>
       <target>haxe.org.dassista</target>
-      <cmd>status</cmd>
-    </execute>
-    <execute>
-      <target>haxe.org.dassista</target>
       <cmd>push origin master</cmd>
     </execute>
 </module>

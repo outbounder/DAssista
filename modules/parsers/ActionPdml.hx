@@ -47,10 +47,7 @@ class ActionPdml implements IMultiModule
 			if (actionInstance == null)
 				throw "can not call action over null action instance for " + action.x.toString();
 				
-			if (action.has.async && action.att.async == "true")
-				return neko.vm.Thread.create(asyncMethodCaller) != null;
-			else
-				return this.asyncMethodCaller();				
+			return this.asyncMethodCaller();				
         }
     
         return true;
