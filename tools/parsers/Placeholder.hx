@@ -2,6 +2,7 @@ package haxe.org.dassista.tools.parsers;
 
 import haxe.xml.Fast;
 import neko.io.File;
+import neko.Lib;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
@@ -23,23 +24,37 @@ class Placeholder implements IMultiModule
         var target:String = context.get("--target--");
 		if (target == null)
 			throw "--target-- field is required";
-			
-		for (key in context.keys()) // TODO ask for input , thus iterate within the target placeholders, not in the context's
+		
+		switch(context.get("--algo--"))
 		{
-			if (target.indexOf("{" + key + "}") != -1) // if there is a placeholder found
+			case null:
 			{
-				var value:String = context.get(key);
-				if (value == null) // key value not found, ask for such
+				var r:EReg = new EReg("{[^{}]+}", "");
+				while (r.match(target))
 				{
-					File.stdout().writeString("please input value for " + key + ":");
-					value = File.stdin().readUntil(13);
+					var value:String = r.matched(0);
+					var newvalue:String = context.get(value.substr(1, value.length-2));
+					if (newvalue == null)
+					{
+						if (neko.Web.isModNeko)
+							throw "can not find value for " + value+" in web mode";
+						Lib.println("need a value for " + value);
+						newvalue = File.stdin().readLine();
+						context.set(value.substr(1, value.length-2), newvalue);
+					}
+					target = target.split(value).join(newvalue);
 				}
-				if (value == null)
-					throw "could not find value for {"+key+"}";
-				target = target.split("{" + key + "}").join(context.get(key));
-			}
+			};
+			case "leave":
+			{
+				for (key in context.keys()) 
+				{
+					if (target.indexOf("{" + key + "}") != -1) // if there is a placeholder found
+						target = target.split("{" + key + "}").join(context.get(key));
+				}
+			};
 		}
-		trace(target);
+		
 		context.set("result", target);
 		return true;
     }
