@@ -6,24 +6,47 @@ import haxe.org.dassista.IMultiModuleContext;
 import neko.io.Path;
 import neko.FileSystem;
 
-class Haxe implements IMultiModule
+class Haxe implements IMultiModule, implements haxe.rtti.Infos
 {
 	public function new() { }
 	public static function main() { return new Haxe(); }
 	
+	/**
+	 * 
+	 * @param	context
+	 * @return Bool
+	 * @_root class path to root entry
+	 * @_cmd haxe command arguments
+	 * @_uses haxe.org.dassista.tools.proxy.Cmd
+	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
+		if (!context.has("root") || !context.has("cmd"))
+		{
+			trace(context.describe(this, "execute"));
+			throw "root and cmd needed";
+		}
+			
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", context.get("root"));
 		cmdContext.set("cmd",  "haxe "+context.get("cmd"));
 		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 	}
 	
+	/**
+	 * 
+	 * @param  context
+	 * @_target class path (may end with * marking as dir) to entry
+	 * @return Bool
+	 */
 	public function neko(context:IMultiModuleContext):Dynamic
 	{
 		context.set("platform", "neko");
 		if (context.get("target") == null)
+		{
+			trace(context.describe(this, "execute"));
 			throw "target needed";
+		}
 		var target:String = context.get("target");
 		if (target.indexOf("*") == -1)
 		{
@@ -91,9 +114,10 @@ class Haxe implements IMultiModule
 				var target:String = context.get("target");
 				var moduleDir:String = context.getRealPath(Path.withoutExtension(target)); // only rootFolder + the directory of the module 
 				var moduleName:String = Path.extension(target); // only module name
-		
+				var useRttiInfos:String = context.has("usertti")?"-D use_rtti_doc":"";
+				
 				cmdContext.set("root", "");
-				cmdContext.set("cmd",  "haxe  -neko " + moduleDir + "\\" + moduleName + ".n -main " + target);
+				cmdContext.set("cmd",  "haxe  -neko " + moduleDir + "\\" + moduleName + ".n -main " + target + " " + useRttiInfos);
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 				return result == 0;
 			};

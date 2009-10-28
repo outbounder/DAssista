@@ -35,11 +35,10 @@ class ActionPdml implements IMultiModule
 			// assign all results gathered so far, this will also put the pdml later overriden 
 			for (key in context.keys()) 
 				actionContext.set(key, context.get(key)); 
-			
 			// assign all action's inner elements
 			for (actionArg in action.elements)
 				actionContext.set(actionArg.name, this.parseArg(actionArg.innerData, actionContext));
-			// finally set the pdml to be passed out 
+			// finally set the pdml to be passed in 
 			actionContext.set("pdml", action);
             
 			// prepare instance
@@ -51,9 +50,12 @@ class ActionPdml implements IMultiModule
 				
 			// call 
 			if (!this.synchMethodCaller(actionInstance, action.name, actionContext))
+			{
+				trace(context.desribe(actionInstance, action.name));
 				return false;
+			}
 				
-			// gather all results presented in the context in as results
+			// gather all results presented in the context as out
 			for (key in actionContext.keys())
 				context.set(key, actionContext.get(key));
         }

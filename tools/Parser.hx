@@ -2,6 +2,7 @@ package haxe.org.dassista.tools;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
+import haxe.rtti.Infos;
 
 import neko.Sys;
 import neko.FileSystem;
@@ -9,7 +10,7 @@ import neko.io.File;
 import neko.io.Path;
 import haxe.xml.Fast;
 
-class Parser implements IMultiModule
+class Parser implements IMultiModule, implements Infos
 {
 	private var startTime:Float;
 
@@ -22,6 +23,11 @@ class Parser implements IMultiModule
 		return new Parser();
 	}
 	
+	/**
+	 * @param  context
+	 * @return true or false
+	 * @_target class|file path to entry without the .pdml extension
+	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		this.startTime = Sys.time();
@@ -29,7 +35,10 @@ class Parser implements IMultiModule
 		
 		var result:Dynamic = this.parseTarget(context.get("target"), context);
 		if (!result)
+		{
 			trace("failed");
+			trace(context.describe(this,"execute"));
+		}
 		  
 		var end:Float = Sys.time();
 		trace("time " + (end - this.startTime) + " s");
@@ -43,14 +52,14 @@ class Parser implements IMultiModule
 			fullPath = fullPath + ".pdml";
 			
         // retrieve the pdml data
-        var pdmlContent:String = File.getContent(fullPath);
-        var xml:Xml = Xml.parse(pdmlContent);
-        var pdml:Fast = new Fast(xml.firstElement());
-        
-        var parser:IMultiModule = context.createTargetModule(pdml.att.parser);
+		var pdmlContent:String = File.getContent(fullPath);
+		var xml:Xml = Xml.parse(pdmlContent);
+		var pdml:Fast = new Fast(xml.firstElement());
+		
+		var parser:IMultiModule = context.createTargetModule(pdml.att.parser);
 		var parserContext:IMultiModuleContext = context.clone();
 		parserContext.set("pdml", pdml);
-        var result:Dynamic = parser.execute(parserContext);
+		var result:Dynamic = parser.execute(parserContext);
 		for (key in parserContext.keys())
 			context.set(key, parserContext.get(key));
 		return result;

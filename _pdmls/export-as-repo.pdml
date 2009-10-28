@@ -19,6 +19,6 @@
     <execute classname="haxe.org.dassista.tools.proxy.Zip">
       <src>releases.org.dassista.repo</src>
       <dest>releases.org.dassista</dest>
-      <name>repo_{version}_{major}_{minor}.zip</name>
+      <name>repo_{version}.zip</name>
     </execute>
 </pdml>

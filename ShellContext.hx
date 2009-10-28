@@ -61,6 +61,11 @@ class ShellContext implements IMultiModuleContext
 		return new ShellContext(this._rootFolder,this._cache,new Hash());
 	}
 	
+	public function has(key:String):Bool
+	{
+		return this._hash.exists(key);
+	}
+	
 	public function get(key:String):Dynamic
 	{
 		return this._hash.get(key);
@@ -74,6 +79,11 @@ class ShellContext implements IMultiModuleContext
 	public function keys():Iterator<String>
 	{
 		return this._hash.keys();
+	}
+	
+	public function describe(instance:IMultiModule, ?field:String):String
+	{
+		return haxe.org.dassista.Attributes.of(Type.getClass(instance), field).toString();
 	}
 	
 	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic
@@ -133,7 +143,7 @@ class ShellContext implements IMultiModuleContext
 		{
 			var oldCwd:String = Sys.getCwd();
 			Sys.setCwd(moduleDir);
-			var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath;
+			var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath+" -D use_rtti_doc";
 			result = Sys.command(cmd);
 			Sys.setCwd(oldCwd);
 		}

@@ -1,5 +1,6 @@
 <pdml parser="haxe.org.dassista.tools.parsers.ActionPdml">
     <neko classname="haxe.org.dassista.tools.proxy.Haxe">
       <target>haxe.org.dassista.tools.*</target>
+      <usertti></usertti>
     </neko>
 </pdml>

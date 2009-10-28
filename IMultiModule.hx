@@ -1,6 +1,8 @@
 package haxe.org.dassista;
 
-interface IMultiModule implements Dynamic 
+import haxe.rtti.Infos;
+
+interface IMultiModule implements Dynamic, implements Infos
 {
 	public function execute(context:IMultiModuleContext):Dynamic;
 }
