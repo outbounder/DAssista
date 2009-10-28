@@ -18,7 +18,7 @@ class Dir implements IMultiModule
 	public function create(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("target") == null)
-			throw "target is required";
+			throw "target is required for create";
 			
 		var target:String = context.getRealPath(context.get("target"));
 		if (!FileSystem.exists(target))
@@ -34,7 +34,7 @@ class Dir implements IMultiModule
 	public function clean(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("target") == null)
-			throw "target is required";
+			throw "target is required for clean";
 		var target:String = context.getRealPath(context.get("target"));
 		if (FileSystem.exists(target))
 		{

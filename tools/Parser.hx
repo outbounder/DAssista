@@ -50,7 +50,10 @@ class Parser implements IMultiModule
         var parser:IMultiModule = context.createTargetModule(pdml.att.parser);
 		var parserContext:IMultiModuleContext = context.clone();
 		parserContext.set("pdml", pdml);
-        return parser.execute(parserContext);
+        var result:Dynamic = parser.execute(parserContext);
+		for (key in parserContext.keys())
+			context.set(key, parserContext.get(key));
+		return result;
 	}
 }
 

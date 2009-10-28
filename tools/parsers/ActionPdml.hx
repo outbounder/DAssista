@@ -6,10 +6,6 @@ import haxe.org.dassista.IMultiModuleContext;
 
 class ActionPdml implements IMultiModule
 {
-	private var actionInstance:IMultiModule;
-	private var actionContext:IMultiModuleContext;
-	private var action:Fast;
-	
     public function new()
     {
         
@@ -34,36 +30,60 @@ class ActionPdml implements IMultiModule
             
         for(action in pdml.elements)
         {
-			this.action = action;
-			this.actionContext = context.clone();
-            this.actionContext.set("pdml", action);
-			for (actionArg in action.elements)
-				this.actionContext.set(actionArg.name, actionArg.innerData);
-            
-			this.actionInstance = module;
+			// prepare context
+			var actionContext:IMultiModuleContext = context.clone();
+			// assign all results gathered so far, this will also put the pdml later overriden 
+			for (key in context.keys()) 
+				actionContext.set(key, context.get(key)); 
 			
+			// assign all action's inner elements
+			for (actionArg in action.elements)
+				actionContext.set(actionArg.name, this.parseArg(actionArg.innerData, actionContext));
+			// finally set the pdml to be passed out 
+			actionContext.set("pdml", action);
+            
+			// prepare instance
+			var actionInstance:IMultiModule = module;
             if(action.has.classname)
-                this.actionInstance = context.createTargetModule(action.att.classname);
+                actionInstance = context.createTargetModule(action.att.classname);
 			if (actionInstance == null)
 				throw "can not call action over null action instance for " + action.x.toString();
 				
-			if (!this.asyncMethodCaller())
+			// call 
+			if (!this.synchMethodCaller(actionInstance, action.name, actionContext))
 				return false;
+				
+			// gather all results presented in the context in as results
+			for (key in actionContext.keys())
+				context.set(key, actionContext.get(key));
         }
     
         return true;
     }
 	
-	private function asyncMethodCaller():Dynamic
+	private function parseArg(arg:String, context:IMultiModuleContext):String
 	{
-		var f = Reflect.field(this.actionInstance, this.action.name);
+		// prepare context for the placeholder
+		var placeholderContext:IMultiModuleContext = context.clone();
+		for (key in context.keys()) 
+				placeholderContext.set(key, context.get(key));
+		placeholderContext.set("--target--", arg);
+		
+		if (!context.executeTargetModule("haxe.org.dassista.tools.parsers.Placeholder", placeholderContext))
+			throw "can not parse arg " + arg + " using haxe.org.dassista.tools.parsers.Placeholder";
+		return placeholderContext.get("result");
+	}
+	
+	private function synchMethodCaller(actionInstance:IMultiModule, actionName:String, actionContext:IMultiModuleContext):Dynamic
+	{
+		var f = Reflect.field(actionInstance, actionName);
 		if(Reflect.isFunction(f))
 		{
-			return Reflect.callMethod(actionInstance, f, [this.actionContext]);
+			return  Reflect.callMethod(actionInstance, f, [actionContext]);
 		}
 		else
 		{
-			throw 'not a possible action ' + this.action.name + " over module " + Type.getClass(this.actionInstance);
+			throw 'not a possible action ' + actionName + " over module " + Type.getClass(actionInstance);
 			return false;
 		}
 	}

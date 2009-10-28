@@ -10,4 +10,5 @@ interface IMultiModuleContext implements Dynamic
 	public function getClassPath(target:String):String;
 	public function get(key:String):Dynamic;
 	public function set(key:String, value:Dynamic):Void;
+	public function keys():Iterator<String>;
 }

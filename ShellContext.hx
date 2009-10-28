@@ -71,6 +71,11 @@ class ShellContext implements IMultiModuleContext
 		this._hash.set(key, value);
 	}
 	
+	public function keys():Iterator<String>
+	{
+		return this._hash.keys();
+	}
+	
 	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic
 	{
 		var classPath:String = this.getClassPath(target);
@@ -122,12 +127,20 @@ class ShellContext implements IMultiModuleContext
 	{
 		var moduleDir:String = this.getRealPath(Path.withoutExtension(moduleClassPath)); // only rootFolder + the directory of the module 
 		var moduleName:String = Path.extension(moduleClassPath); // only module name
-
-		var oldCwd:String = Sys.getCwd();
-		Sys.setCwd(moduleDir);
-		var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath;
-		var result:Int = Sys.command(cmd);
-		Sys.setCwd(oldCwd);
+		
+		var result:Int = -1;
+		try
+		{
+			var oldCwd:String = Sys.getCwd();
+			Sys.setCwd(moduleDir);
+			var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath;
+			result = Sys.command(cmd);
+			Sys.setCwd(oldCwd);
+		}
+		catch (e:Dynamic)
+		{
+			throw e+" while compiling "+moduleClassPath;
+		}
 		
 		return result == 0;
 	}

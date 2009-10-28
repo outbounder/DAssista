@@ -1,4 +1,7 @@
 <pdml parser="haxe.org.dassista.tools.parsers.ActionPdml">
+    <execute classname="haxe.org.dassista.tools.Parser">
+        <target>haxe.org.dassista._pdmls.module</target>
+    </execute>
     <clean classname="haxe.org.dassista.tools.proxy.Dir">
       <target>releases.org.dassista</target>
     </clean>
@@ -16,6 +19,6 @@
     <execute classname="haxe.org.dassista.tools.proxy.Zip">
       <src>releases.org.dassista.repo</src>
       <dest>releases.org.dassista</dest>
-      <name>repo_0.2.zip</name>
+      <name>repo_{version}.zip</name>
     </execute>
 </pdml>
