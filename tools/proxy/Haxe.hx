@@ -79,7 +79,7 @@ class Haxe implements IMultiModule
 				var dirContext:IMultiModuleContext = context.clone();
 				dirContext.set("target", dest);
 				if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
-					return false;
+					throw "can not create target dir " + dest;
 				
 				cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe -php " + dest + " --php-front " + context.get("front") + " -main " + context.get("target"));

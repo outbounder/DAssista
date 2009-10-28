@@ -26,7 +26,7 @@ class Dir implements IMultiModule
 			var cmdContext:Dynamic = context.clone();
 			cmdContext.set("root", "");
 			cmdContext.set("cmd", "mkdir "+target);
-			return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+			return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext) == 0;
 		}
 		return true;
 	}
