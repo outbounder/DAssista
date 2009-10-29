@@ -3,7 +3,7 @@
         <target>haxe.org.dassista._pdmls.module</target>
     </execute>
     <clean classname="haxe.org.dassista.tools.proxy.Dir">
-      <target>releases.org.dassista</target>
+      <target>releases.org.dassista.12</target>
     </clean>
     <execute classname="haxe.org.dassista.tools.proxy.Copy">
       <src>haxe.org.dassista</src>

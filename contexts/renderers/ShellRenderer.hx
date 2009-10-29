@@ -4,6 +4,7 @@ import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
 import haxe.org.dassista.ModuleException;
 import haxe.rtti.Infos;
+import haxe.Stack;
 import neko.io.File;
 
 /**
@@ -29,7 +30,7 @@ class ShellRenderer implements IMultiModule, implements Infos
 		{
 			File.stdout().writeString("EXCEPTION:\n");
 			File.stdout().writeString(value.getMessage() + "\n");
-			File.stdout().writeString("MODULE:\n");
+			File.stdout().writeString("MODULE:"+Type.getClassName(Type.getClass(value.getModule()))+":\n");
 			File.stdout().writeString(context.describe(value.getModule()).toString() + "\n");
 			File.stdout().writeString("METHOD:"+value.getMethod()+":\n");
 			File.stdout().writeString(context.describe(value.getModule(), value.getMethod()).toString()+"\n");
