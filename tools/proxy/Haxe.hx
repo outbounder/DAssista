@@ -2,10 +2,17 @@ package haxe.org.dassista.tools.proxy;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
+import haxe.org.dassista.ModuleException;
 
 import neko.io.Path;
 import neko.FileSystem;
 
+/**
+ * @author Boris Filipov
+ * @version 0.1
+ * @name haxe.org.dassista.tools.proxy.Haxe
+ * @description proxy for haxe compiler compatible to DAssistA class path, works only within the swarm
+ */
 class Haxe implements IMultiModule, implements haxe.rtti.Infos
 {
 	public function new() { }
@@ -15,6 +22,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	 * 
 	 * @param	context
 	 * @return Bool
+	 * @throws ModuleException
 	 * @_root class path to root entry
 	 * @_cmd haxe command arguments
 	 * @_uses haxe.org.dassista.tools.proxy.Cmd
@@ -22,10 +30,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		if (!context.has("root") || !context.has("cmd"))
-		{
-			trace(context.describe(this, "execute"));
-			throw "root and cmd needed";
-		}
+			throw new ModuleException("root and cmd needed", this, "execute");
 			
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", context.get("root"));
@@ -36,31 +41,41 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	/**
 	 * 
 	 * @param  context
-	 * @_target class path (may end with * marking as dir) to entry
 	 * @return Bool
+	 * @throws ModuleException
+	 * @_target class path to entry (dir or file without hx extension)
 	 */
 	public function neko(context:IMultiModuleContext):Dynamic
 	{
+		if (!context.has("target"))
+			throw new ModuleException("target needed", this, "neko");
+
 		context.set("platform", "neko");
-		if (context.get("target") == null)
-		{
-			trace(context.describe(this, "execute"));
-			throw "target needed";
-		}
 		var target:String = context.get("target");
-		if (target.indexOf("*") == -1)
+		if (FileSystem.exists(context.getRealPath(context.get("target"))+".hx")) // check such file exists
 		{
 			return this.haxe(context);
 		}
 		else
 		{
-			context.set("target", target.split("*")[0]);
+			context.set("target", target); // execute as target dir
 			return this.haxeThisDir(context);
 		}
 	}
 	
+	/**
+	 * 
+	 * @param	context
+	 * @return Bool
+	 * @throws ModuleException
+	 * @_target class path to main for php project
+	 * @_dest class path to destination folder
+	 */
 	public function php(context:IMultiModuleContext):Dynamic
 	{
+		if (!context.has("target") || !context.has("dest"))
+			throw new ModuleException("target and dest needed", this, "php");
+			
 		context.set("platform", "php");
 		return this.haxe(context);
 	}
@@ -76,13 +91,13 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 		{
 			if (FileSystem.kind(dirFullPath+"\\"+entry) == FileKind.kdir)
 			{
-				context.set("target", target + entry + ".");
+				context.set("target", target + "." + entry);
 				if (!this.haxeThisDir(context))
 					return false;
 			}
 			else if(Path.extension(entry) == "hx")
 			{
-				context.set("target", target + Path.withoutExtension(entry));
+				context.set("target", target + "." + Path.withoutExtension(entry));
 				if (!this.haxe(context))
 					return false;
 			}
@@ -122,7 +137,8 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 				return result == 0;
 			};
 		}
-		trace("not recognized platform " + context.get("platform"));
+		
+		throw "not recognized platform " + context.get("platform");
 		return false;
 	}
 }

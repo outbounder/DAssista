@@ -2,6 +2,8 @@ package haxe.org.dassista;
 
 import haxe.org.dassista.IMultiModuleContext;
 import haxe.org.dassista.IMultiModule;
+import haxe.org.dassista.ModuleException;
+import haxe.Stack;
 
 import neko.FileSystem;
 import neko.Sys;
@@ -24,15 +26,30 @@ class ShellContext implements IMultiModuleContext
 		
 		var shellInstance:ShellContext = new ShellContext(Sys.getCwd(), new Hash(), new Hash());
 		for (arg in Sys.args())
-		{
 			shellInstance.set(arg.split("=")[0], arg.split("=")[1]);
-		}
 		
 		var result:Bool = false;
-		if(shellInstance.getSysArg("method") == null)
-			result = shellInstance.executeTargetModule(shellInstance.getSysArg("module"), shellInstance); 
-		else
-			result = shellInstance.callTargetModuleMethod(shellInstance.getSysArg("module"), shellInstance.getSysArg("method"), shellInstance); 
+		try
+		{
+			if(shellInstance.getSysArg("method") == null)
+				result = shellInstance.executeTargetModule(shellInstance.getSysArg("module"), shellInstance); 
+			else
+				result = shellInstance.callTargetModuleMethod(shellInstance.getSysArg("module"), shellInstance.getSysArg("method"), shellInstance); 
+		}
+		catch (e:Dynamic)
+		{
+			var module = Reflect.field(e, "getModule");
+			if (Reflect.isFunction(module)) 
+			{
+				// assuming it is ModuleException
+				trace("-- ModuleException found:\n" + e.getMessage());
+				trace("-- Module:\n"+shellInstance.describe(e.getModule()));
+				trace("-- Method:\n" + shellInstance.describe(e.getModule(), e.getMethod()).toString());
+				trace(Stack.toString(Stack.exceptionStack()));
+			}
+			else	
+				trace("Unknown exception found:" + e);
+		}
 		if (result == false)
 			trace("shell execution failed");
 		return result;
@@ -81,9 +98,9 @@ class ShellContext implements IMultiModuleContext
 		return this._hash.keys();
 	}
 	
-	public function describe(instance:IMultiModule, ?field:String):String
+	public function describe(instance:IMultiModule, ?field:String):Xml
 	{
-		return haxe.org.dassista.Attributes.of(Type.getClass(instance), field).toString();
+		return haxe.org.dassista.Attributes.of(Type.getClass(instance), field).toXml();
 	}
 	
 	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic
@@ -101,7 +118,7 @@ class ShellContext implements IMultiModuleContext
 		if(Reflect.isFunction(f))
 			return Reflect.callMethod(instance, f, [methodContext]);
 		else
-			throw 'not a possible action '+methodName+" over module "+Type.getClass(instance);
+			throw new ModuleException('not a possible action '+methodName+" over module "+Type.getClass(instance), instance, methodName);
 	}
 	
 	public function createTargetModule(target:String):IMultiModule
@@ -110,7 +127,7 @@ class ShellContext implements IMultiModuleContext
 		
 		// check cache 
         if(this._cache.exists(moduleClassPath))
-            return this._cache.get(moduleClassPath).execute();
+            return this._cache.get(moduleClassPath);
                 
         // load the module & return its instance
 		try
@@ -119,9 +136,9 @@ class ShellContext implements IMultiModuleContext
 			
 			var moduleCompiledPath:String = this.getRealPath(moduleClassPath)+".n";
 			var nekoModule:Module = Loader.local().loadModule(moduleCompiledPath);
-			this._cache.set(moduleClassPath, nekoModule); // save to cache
-			
 			var multiModuleInstance:Dynamic = nekoModule.execute();
+			
+			this._cache.set(moduleClassPath, multiModuleInstance); // save to cache
 			return multiModuleInstance;
 		}
 		catch (e:Dynamic)
@@ -163,9 +180,9 @@ class ShellContext implements IMultiModuleContext
 		if (target.indexOf("/") == -1)
 			target = target.split(".").join("/");  // it is class name path style, convert to file system.
 		if (target.indexOf("./") == 0)
-			target = target.substr(2);
+			target = target.substr(2); // remove the relative prefix
 		var result:String = this._rootFolder + target;
-		result = result.split("/").join("\\"); // return always with root if not a full path
+		result = result.split("/").join("\\"); // workaround slashes
 		// remove last slash
 		if (result.charAt(result.length - 1) == "\\") // to be changed
 			return result.substr(0, result.length - 1);

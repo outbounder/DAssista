@@ -21,4 +21,7 @@
       <dest>releases.org.dassista</dest>
       <name>repo_{version}.zip</name>
     </execute>
+    <clean classname="haxe.org.dassista.tools.proxy.Dir">
+        <target>releases.org.dassista.repo</target>
+    </clean>
 </pdml>

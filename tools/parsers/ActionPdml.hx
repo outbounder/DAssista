@@ -1,10 +1,20 @@
 package haxe.org.dassista.tools.parsers;
 
+import haxe.rtti.Infos;
 import haxe.xml.Fast;
+
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
+import haxe.org.dassista.ModuleException;
 
-class ActionPdml implements IMultiModule
+/**
+ * @author Boris Filipov
+ * @version 0.1
+ * @name haxe.org.dassista.tools.parsers.ActionPdml
+ * @description parses pdml files provided by class path "target" entry. Can not parse directories. Parse means execute given class' method according provided args.
+ * @uses haxe.org.dassista.tools.parsers.Placeholder to parse any placeholders arguments
+ */
+class ActionPdml implements IMultiModule, implements Infos
 {
     public function new()
     {
@@ -14,13 +24,19 @@ class ActionPdml implements IMultiModule
     {
         return new ActionPdml();
     }
-
+	
+	/**
+	 * 
+	 * @param	context
+	 * @return Bool
+	 * @_pdml Fast instance of XML to be parsed
+	 */
     public function execute(context:IMultiModuleContext):Dynamic
     {        
         var pdml:Fast = context.get("pdml");
         
         if(pdml == null)
-            throw "can not find pdml instanceof Fast input field";
+            throw new ModuleException("can not find pdml instanceof Fast input field", this, "execute");
         
 		var module:Dynamic = null;
         if (pdml.has.classname)
@@ -50,10 +66,7 @@ class ActionPdml implements IMultiModule
 				
 			// call 
 			if (!this.synchMethodCaller(actionInstance, action.name, actionContext))
-			{
-				trace(context.desribe(actionInstance, action.name));
 				return false;
-			}
 				
 			// gather all results presented in the context as out
 			for (key in actionContext.keys())
@@ -72,7 +85,7 @@ class ActionPdml implements IMultiModule
 		placeholderContext.set("--target--", arg);
 		
 		if (!context.executeTargetModule("haxe.org.dassista.tools.parsers.Placeholder", placeholderContext))
-			throw "can not parse arg " + arg + " using haxe.org.dassista.tools.parsers.Placeholder";
+			throw new ModuleException("can not parse arg " + arg + " using haxe.org.dassista.tools.parsers.Placeholder", this, "execute");
 		return placeholderContext.get("result");
 	}
 	
@@ -85,7 +98,7 @@ class ActionPdml implements IMultiModule
 		}
 		else
 		{
-			throw 'not a possible action ' + actionName + " over module " + Type.getClass(actionInstance);
+			throw new ModuleException('not a possible action ' + actionName + " over module " + Type.getClass(actionInstance), this, "execute");
 			return false;
 		}
 	}

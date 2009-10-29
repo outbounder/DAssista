@@ -143,6 +143,15 @@ class Attributes {
 		return '{ ' + a.join(', ') + ' }';
 	}
 	
+	public function toXml():Xml
+	{
+		var a = [];
+		for (k in keys()) {
+			a.push("<" + k + (isInherited(k) ? ' inherited = "true"' : '') + '>' + get(k) + "</" + k + ">");
+		}
+		return Xml.parse('<attributes>\n' + a.join('\n') + '\n</attributes>');
+	}
+	
 	var h : Hash<String>;
 	
 	function new(parent : Attributes) {
