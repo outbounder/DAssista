@@ -2,15 +2,27 @@ package haxe.org.dassista.tools.proxy;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
+import haxe.org.dassista.ModuleException;
+import haxe.rtti.Infos;
 
 import neko.io.File;
 import neko.FileSystem;
 
-class Copy implements IMultiModule
+/**
+ * @description proxy module for Copy operations
+ */
+class Copy implements IMultiModule, implements Infos
 {
 	public function new() { }
 	public static function main() { return new Copy(); }
 	
+	/**
+	 * @internal this help is not full
+	 * @src source dir 
+	 * @dest dest dir
+	 * @name used to define file(s) to be copied
+	 * @return Bool
+	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("src") == null || context.get("dest") == null)
@@ -21,7 +33,7 @@ class Copy implements IMultiModule
 		var dest:String = context.getRealPath(context.get("dest"));
 		
 		if (!FileSystem.exists(src))
-			throw "src does not exists : " + src;
+			throw new ModuleException("src does not exists : " + src, this, "execute");
 		
 		if (src.indexOf("*") != -1 || FileSystem.isDirectory(src))
 		{

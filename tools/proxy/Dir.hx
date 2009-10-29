@@ -27,7 +27,7 @@ class Dir implements IMultiModule, implements Infos
 	}
 	
 	/**
-	 * @_target class path which will be created fully
+	 * @target class path which will be created fully
 	 * @return Bool
 	 */
 	public function create(context:IMultiModuleContext):Dynamic
@@ -49,7 +49,7 @@ class Dir implements IMultiModule, implements Infos
 	
 	/**
 	 * @desc Deletes all that is found at the provided target including itself
-	 * @_target class path which will be cleaned, leaving the class path empty
+	 * @target class path which will be cleaned, leaving the class path empty
 	 * @return Bool
 	 */
 	public function clean(context:IMultiModuleContext):Dynamic

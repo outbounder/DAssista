@@ -19,13 +19,10 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	public static function main() { return new Haxe(); }
 	
 	/**
-	 * 
-	 * @param	context
 	 * @return Bool
 	 * @throws ModuleException
-	 * @_root class path to root entry
-	 * @_cmd haxe command arguments
-	 * @_uses haxe.org.dassista.tools.proxy.Cmd
+	 * @root class path to root entry
+	 * @cmd haxe command arguments
 	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
@@ -39,11 +36,9 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	}
 	
 	/**
-	 * 
-	 * @param  context
 	 * @return Bool
 	 * @throws ModuleException
-	 * @_target class path to entry (dir or file without hx extension)
+	 * @target class path to entry (dir or file without hx extension)
 	 */
 	public function neko(context:IMultiModuleContext):Dynamic
 	{
@@ -64,12 +59,10 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	}
 	
 	/**
-	 * 
-	 * @param	context
 	 * @return Bool
 	 * @throws ModuleException
-	 * @_target class path to main for php project
-	 * @_dest class path to destination folder
+	 * @target class path to main for php project
+	 * @dest class path to destination folder
 	 */
 	public function php(context:IMultiModuleContext):Dynamic
 	{
@@ -105,6 +98,13 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 		return true;
 	}
 	
+	/**
+	 * @platform php|neko
+	 * @dest used in php to define the destination folder
+	 * @target used to define where is the entry point upon which a compile will be made
+	 * @usertti optional neko argument for specifing compilation with rtti included
+	 * @return Bool
+	 */
 	private function haxe(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();
@@ -117,7 +117,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 				var dirContext:IMultiModuleContext = context.clone();
 				dirContext.set("target", dest);
 				if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
-					throw "can not create target dir " + dest;
+					throw new ModuleException("can not create target dir " + dest, this, "haxe");
 				
 				cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe -php " + dest + " --php-front " + context.get("front") + " -main " + context.get("target"));
@@ -138,7 +138,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 			};
 		}
 		
-		throw "not recognized platform " + context.get("platform");
+		throw new ModuleException("not recognized platform " + context.get("platform"), this, "haxe");
 		return false;
 	}
 }

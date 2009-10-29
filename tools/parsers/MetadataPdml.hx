@@ -1,12 +1,17 @@
 package haxe.org.dassista.tools.parsers;
 
+import haxe.rtti.Infos;
 import haxe.xml.Fast;
 import neko.io.File;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
+import haxe.org.dassista.ModuleException;
 
-class MetadataPdml implements IMultiModule
+/**
+ * @description parser for pdml files where it finds all elements(nodes) and puts them in the context as key/value pairs if possible
+ */
+class MetadataPdml implements IMultiModule, implements Infos
 {
     public function new()
     {
@@ -18,13 +23,17 @@ class MetadataPdml implements IMultiModule
         return new MetadataPdml();
     }
     
+	/**
+	 * @pdml Fast presentation of the pdml file which have to be parsed
+	 * @return Bool
+	 * @throws ModuleException
+	 */
     public function execute(context:IMultiModuleContext):Dynamic
     {
-        var pdml:Fast = context.get("pdml"); 
-		
-		if(pdml == null)
-            throw "can not find pdml instanceof Fast input field";
-
+		if(!context.has("pdml"))
+            new ModuleException("can not find pdml instanceof Fast input field", this, "execute");
+			
+		var pdml:Fast = context.get("pdml"); 
         for(entry in pdml.elements)
         {
             context.set(entry.name, entry.innerData);

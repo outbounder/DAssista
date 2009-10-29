@@ -26,10 +26,8 @@ class ActionPdml implements IMultiModule, implements Infos
     }
 	
 	/**
-	 * 
-	 * @param	context
 	 * @return Bool
-	 * @_pdml Fast instance of XML to be parsed
+	 * @pdml Fast instance of XML to be parsed
 	 */
     public function execute(context:IMultiModuleContext):Dynamic
     {        

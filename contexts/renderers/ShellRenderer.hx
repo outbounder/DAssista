@@ -14,6 +14,7 @@ class ShellRenderer implements IMultiModule, implements Infos
 	/**
 	 * @param context
 	 * @value value to be rendered. If it is ModuleException, then context.describe will be used.
+	 * @throws ModuleException
 	 * @return Bool
 	 */
 	public function execute(context:IMultiModuleContext):Dynamic

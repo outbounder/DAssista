@@ -2,14 +2,24 @@ package haxe.org.dassista.tools.proxy;
 
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.IMultiModuleContext;
+import haxe.rtti.Infos;
 import neko.Sys;
 import neko.FileSystem;
 
-class Zip implements IMultiModule
+/**
+ * @description module proxy for zip
+ */
+class Zip implements IMultiModule, implements Infos
 {
 	public function new() { }
 	public static function main() { return new Zip(); }
 	
+	/**
+	 * @src source directory to be zipped
+	 * @dest dest directory for the zip
+	 * @name name of the zip to be produced
+	 * @return Bool
+	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		var cmdContext:IMultiModuleContext = context.clone();

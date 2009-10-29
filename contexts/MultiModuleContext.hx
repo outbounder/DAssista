@@ -25,6 +25,46 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		this._cache = new Hash();
 	}
 	
+	
+	
+	public function has(key:String):Bool
+	{
+		return this._hash.exists(key);
+	}
+	
+	public function get(key:String):Dynamic
+	{
+		return this._hash.get(key);
+	}
+	
+	public function set(key:String, value:Dynamic):Void
+	{
+		this._hash.set(key, value);
+	}
+	
+	public function keys():Iterator<String>
+	{
+		return this._hash.keys();
+	}
+	
+	public function output(value:Dynamic):Void
+	{
+		trace(value);
+	}
+	
+	public function clone():IMultiModuleContext
+	{
+		var clone:IMultiModuleContext = new ShellContext();
+		clone._rootFolder = this._rootFolder;
+		clone._cache = this._cache;
+		return clone;
+	}
+	
+	public function describe(instance:IMultiModule, ?field:String):Xml
+	{
+		return haxe.org.dassista.Attributes.of(Type.getClass(instance), field).toXml();
+	}
+	
 	/**
 	 * 
 	 * @param	context
@@ -54,45 +94,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 			return false;
 		}
 	}
-	
-	public function clone():IMultiModuleContext
-	{
-		var clone:IMultiModuleContext = new ShellContext();
-		clone._rootFolder = this._rootFolder;
-		clone._cache = this._cache;
-		return clone;
-	}
-	
-	public function has(key:String):Bool
-	{
-		return this._hash.exists(key);
-	}
-	
-	public function get(key:String):Dynamic
-	{
-		return this._hash.get(key);
-	}
-	
-	public function set(key:String, value:Dynamic):Void
-	{
-		this._hash.set(key, value);
-	}
-	
-	public function keys():Iterator<String>
-	{
-		return this._hash.keys();
-	}
-	
-	public function output(value:Dynamic):Void
-	{
-		trace(value);
-	}
-	
-	public function describe(instance:IMultiModule, ?field:String):Xml
-	{
-		return haxe.org.dassista.Attributes.of(Type.getClass(instance), field).toXml();
-	}
-	
+
 	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic
 	{
 		var classPath:String = this.getClassPath(target);
@@ -108,7 +110,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		if(Reflect.isFunction(f))
 			return Reflect.callMethod(instance, f, [methodContext]);
 		else
-			throw new ModuleException('not a possible action '+methodName+" over module "+Type.getClass(instance), instance, methodName);
+			throw new ModuleException('not a possible action '+methodName+" over module "+Type.getClass(instance), this, "callTargetModuleMethod");
 	}
 	
 	public function createTargetModule(target:String):IMultiModule
@@ -133,7 +135,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		}
 		catch (e:Dynamic)
 		{
-			throw new ModuleException("module can not be created:" + target,this,"createTargetModule");
+			throw new ModuleException("module can not be created:" + target, this, "createTargetModule");
 			return null;
 		}
 	}
@@ -154,7 +156,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		}
 		catch (e:Dynamic)
 		{
-			throw new ModuleException(e+" while compiling "+moduleClassPath,this,"compileTargetModule");
+			throw new ModuleException(e + " while compiling " + moduleClassPath, this, "compileTargetModule");
 		}
 		
 		return result == 0;
@@ -188,7 +190,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		if (target.indexOf("./") == 0)
 			target = target.substr(3, target.length - 2);
 		if (target.indexOf(":") != -1)
-			throw new ModuleException("can not convert full path outside of repo to classpath " + target,this,"getClassPath");
+			throw new ModuleException("can not convert full path outside of repo to classpath " + target, this, "getClassPath");
 		return target.split("\\").join(".");
 	}
 }

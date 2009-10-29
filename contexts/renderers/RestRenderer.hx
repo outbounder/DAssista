@@ -6,6 +6,9 @@ import haxe.org.dassista.ModuleException;
 import haxe.rtti.Infos;
 import neko.io.File;
 
+/**
+ * @description renders all values passed to execute to the web
+ */
 class RestRenderer implements IMultiModule, implements Infos
 {
 	public function new() { }
@@ -14,6 +17,7 @@ class RestRenderer implements IMultiModule, implements Infos
 	/**
 	 * @param context
 	 * @value value to be rendered. If it is ModuleException, then context.describe will be used.
+	 * @throws ModuleException
 	 * @return Bool
 	 */
 	public function execute(context:IMultiModuleContext):Dynamic
