@@ -31,9 +31,8 @@ class Parser implements IMultiModule, implements Infos
 	}
 	
 	/**
-	 * @param  context
 	 * @return Bool
-	 * @_target class|file path to entry without the .pdml extension
+	 * @target class|file path to entry without the .pdml extension
 	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
@@ -50,7 +49,7 @@ class Parser implements IMultiModule, implements Infos
 	}
 	
 	/**
-	 * @param  target to be parsed
+	 * @target to be parsed
 	 * @return Dynamic (parser's result)
 	 */
 	public function parseTarget(target:String, context:IMultiModuleContext):Dynamic

@@ -149,7 +149,10 @@ class Attributes {
 		for (k in keys()) {
 			a.push("<" + k + (isInherited(k) ? ' inherited = "true"' : '') + '>' + get(k) + "</" + k + ">");
 		}
-		return Xml.parse('<attributes>\n' + a.join('\n') + '\n</attributes>');
+		if(a.length != 0)
+			return Xml.parse('<attributes>\n' + a.join('\n') + '\n</attributes>');
+		else
+			return Xml.parse('<attributes></attributes>');
 	}
 	
 	var h : Hash<String>;
