@@ -3,4 +3,8 @@
       <target>haxe.org.dassista.tools</target>
       <usertti></usertti>
     </neko>
+    <neko classname="haxe.org.dassista.tools.proxy.Haxe">
+      <target>haxe.org.dassista.contexts</target>
+      <usertti></usertti>
+    </neko>
 </pdml>

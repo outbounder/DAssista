@@ -1,81 +1,66 @@
-package haxe.org.dassista;
+package haxe.org.dassista.contexts;
 
 import haxe.org.dassista.IMultiModuleContext;
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.ModuleException;
-import haxe.Stack;
+import haxe.rtti.Infos;
 
-import neko.FileSystem;
-import neko.Sys;
-import neko.io.Path;
-import neko.FileSystem;
 import neko.vm.Module;
 import neko.vm.Loader;
+import neko.FileSystem;
+import neko.io.Path;
+import neko.Sys;
 
-class ShellContext implements IMultiModuleContext
+class MultiModuleContext implements IMultiModuleContext, implements IMultiModule, implements Infos
 {
+	private var _rootFolder:String;
 	private var _hash:Hash<Dynamic>;
 	private var _cache:Hash<Dynamic>;
-	private var _rootFolder:String;
 	
-	public static function main():Dynamic 
+	public static function main() { return new MultiModuleContext(); }
+	
+	public function new() 
+	{ 
+		this._hash = new Hash(); 
+		this._cache = new Hash();
+	}
+	
+	/**
+	 * 
+	 * @param	context
+	 * @return Dynamic or false
+	 * @module which has to be compiled/created
+	 * @rootFolder which will be used to compile, getClassPath, getRealPath
+	 * @method (optional) which has to be invoked otherwise default 'execute' method is invoked
+	 */
+	public function execute(context:IMultiModuleContext):Dynamic
 	{
-		trace("dassista shell context v0.1");
-		if (Sys.args().length == 0)
-			throw "not supported execution, try with module=<moduleClassPath> <module additional args>";
-		
-		var shellInstance:ShellContext = new ShellContext(Sys.getCwd(), new Hash(), new Hash());
-		for (arg in Sys.args())
-			shellInstance.set(arg.split("=")[0], arg.split("=")[1]);
-		
-		var result:Bool = false;
 		try
 		{
-			if(shellInstance.getSysArg("method") == null)
-				result = shellInstance.executeTargetModule(shellInstance.getSysArg("module"), shellInstance); 
+			if (!context.has("module") || !context.has("rootFolder"))
+				throw new ModuleException("module and rootFolder are needed", this, "execute");
+				
+			this._rootFolder = context.get("rootFolder"); // refine rootFolder for the current instance
+			
+			// execute the target module or its method
+			if (context.has("method"))
+				return this.callTargetModuleMethod(context.get("module"), context.get("method"), this);
 			else
-				result = shellInstance.callTargetModuleMethod(shellInstance.getSysArg("module"), shellInstance.getSysArg("method"), shellInstance); 
+				return this.executeTargetModule(context.get("module"), this);
 		}
 		catch (e:Dynamic)
 		{
-			var module = Reflect.field(e, "getModule");
-			if (Reflect.isFunction(module)) 
-			{
-				// assuming it is ModuleException
-				trace("-- ModuleException found:\n" + e.getMessage());
-				trace("-- Module:\n"+shellInstance.describe(e.getModule()));
-				trace("-- Method:\n" + shellInstance.describe(e.getModule(), e.getMethod()).toString());
-				trace(Stack.toString(Stack.exceptionStack()));
-			}
-			else	
-				trace("Unknown exception found:" + e);
+			this.output(e);
+			return false;
 		}
-		if (result == false)
-			trace("shell execution failed");
-		return result;
-	}
-	
-	private function getSysArg(name:String):String
-	{
-		for (arg in Sys.args())
-		{
-			var parts:Array < String > = arg.split("=");
-			if (parts[0] == name)
-				return parts[1];
-		}
-		return null;
-	}
-	
-	public function new(rootFolder:String,cache:Hash<Dynamic>,hash:Hash<Dynamic>)
-	{
-		this._rootFolder = rootFolder;
-		this._hash = cache;
-		this._cache = hash;
 	}
 	
 	public function clone():IMultiModuleContext
 	{
-		return new ShellContext(this._rootFolder,this._cache,new Hash());
+		var clone:IMultiModuleContext = new ShellContext();
+		clone._rootFolder = this._rootFolder;
+		clone._cache = this._cache;
+		return clone;
 	}
 	
 	public function has(key:String):Bool
@@ -96,6 +81,11 @@ class ShellContext implements IMultiModuleContext
 	public function keys():Iterator<String>
 	{
 		return this._hash.keys();
+	}
+	
+	public function output(value:Dynamic):Void
+	{
+		trace(value);
 	}
 	
 	public function describe(instance:IMultiModule, ?field:String):Xml
@@ -143,9 +133,7 @@ class ShellContext implements IMultiModuleContext
 		}
 		catch (e:Dynamic)
 		{
-			trace("module can not be created:" + target);
-			trace("------- stack -----------");
-			throw e;
+			throw new ModuleException("module can not be created:" + target,this,"createTargetModule");
 			return null;
 		}
 	}
@@ -166,7 +154,7 @@ class ShellContext implements IMultiModuleContext
 		}
 		catch (e:Dynamic)
 		{
-			throw e+" while compiling "+moduleClassPath;
+			throw new ModuleException(e+" while compiling "+moduleClassPath,this,"compileTargetModule");
 		}
 		
 		return result == 0;
@@ -200,7 +188,7 @@ class ShellContext implements IMultiModuleContext
 		if (target.indexOf("./") == 0)
 			target = target.substr(3, target.length - 2);
 		if (target.indexOf(":") != -1)
-			throw "can not convert full path outside of repo to classpath " + target;
+			throw new ModuleException("can not convert full path outside of repo to classpath " + target,this,"getClassPath");
 		return target.split("\\").join(".");
 	}
 }

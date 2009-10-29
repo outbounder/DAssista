@@ -40,14 +40,12 @@ class Parser implements IMultiModule, implements Infos
 		if (!context.has("target"))
 			throw new ModuleException("target needed", this, "execute");
 		this.startTime = Sys.time();
-		trace("parsing " + context.get("target"));
+		context.output("parsing " + context.get("target"));
 		
 		var result:Dynamic = this.parseTarget(context.get("target"), context);
-		if (!result)
-			trace("failed");
 		  
 		var end:Float = Sys.time();
-		trace("time " + (end - this.startTime) + " s");
+		context.output("time " + (end - this.startTime) + " s");
 		return result;
 	}
 	

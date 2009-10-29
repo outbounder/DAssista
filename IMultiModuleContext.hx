@@ -3,6 +3,7 @@ package haxe.org.dassista;
 interface IMultiModuleContext implements Dynamic
 {
 	public function clone():IMultiModuleContext;
+	public function output(value:Dynamic):Void;
 	public function describe(instance:IMultiModule, ?field:String):Xml;
 	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic;
 	public function createTargetModule(target:String):IMultiModule;
