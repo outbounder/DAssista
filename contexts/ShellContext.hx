@@ -4,12 +4,19 @@ import haxe.org.dassista.IMultiModuleContext;
 import haxe.org.dassista.IMultiModule;
 import haxe.org.dassista.contexts.MultiModuleContext;
 
-
 class ShellContext extends MultiModuleContext
 {
 	public static function main():Dynamic 
 	{
 		return new ShellContext();
+	}
+	
+	public override function clone():IMultiModuleContext
+	{
+		var clone:IMultiModuleContext = new ShellContext();
+		clone._rootFolder = this._rootFolder;
+		clone._cache = this._cache;
+		return clone;
 	}
 	
 	public override function output(value:Dynamic):Void

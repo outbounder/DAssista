@@ -11,6 +11,14 @@ class RestServiceContext extends MultiModuleContext
 		return new RestServiceContext();
 	}
 	
+	public override function clone():IMultiModuleContext
+	{
+		var clone:IMultiModuleContext = new RestServiceContext();
+		clone._rootFolder = this._rootFolder;
+		clone._cache = this._cache;
+		return clone;
+	}
+	
 	public override function output(value:Dynamic):Void
 	{
 		var rendererContext:IMultiModuleContext = this.clone();

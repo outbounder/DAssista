@@ -8,6 +8,7 @@ interface IMultiModuleContext implements Dynamic
 	public function executeTargetModule(target:String, targetContext:IMultiModuleContext):Dynamic;
 	public function createTargetModule(target:String):IMultiModule;
 	public function compileTargetModule(target:String):Bool;
+	public function callTargetModuleMethod(target:String, methodName:String, methodContext:IMultiModuleContext):Dynamic;
 	public function getRealPath(target:String):String;
 	public function getClassPath(target:String):String;
 	public function get(key:String):Dynamic;

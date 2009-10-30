@@ -13,7 +13,7 @@ import neko.Sys;
 
 class MultiModuleContext implements IMultiModuleContext, implements IMultiModule, implements Infos
 {
-	private var _rootFolder:String;
+	public var _rootFolder:String;
 	private var _hash:Hash<Dynamic>;
 	private var _cache:Hash<Dynamic>;
 	
@@ -24,8 +24,6 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		this._hash = new Hash(); 
 		this._cache = new Hash();
 	}
-	
-	
 	
 	public function has(key:String):Bool
 	{
@@ -54,7 +52,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 	
 	public function clone():IMultiModuleContext
 	{
-		var clone:IMultiModuleContext = new ShellContext();
+		var clone:IMultiModuleContext = new MultiModuleContext();
 		clone._rootFolder = this._rootFolder;
 		clone._cache = this._cache;
 		return clone;
@@ -70,23 +68,20 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 	 * @param	context
 	 * @return Dynamic or false
 	 * @module which has to be compiled/created
-	 * @rootFolder which will be used to compile, getClassPath, getRealPath
 	 * @method (optional) which has to be invoked otherwise default 'execute' method is invoked
 	 */
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		try
 		{
-			if (!context.has("module") || !context.has("rootFolder"))
-				throw new ModuleException("module and rootFolder are needed", this, "execute");
-				
-			this._rootFolder = context.get("rootFolder"); // refine rootFolder for the current instance
+			if (!context.has("module"))
+				throw new ModuleException("module is needed", this, "execute");
 			
 			// execute the target module or its method
 			if (context.has("method"))
-				return this.callTargetModuleMethod(context.get("module"), context.get("method"), this);
+				return this.callTargetModuleMethod(context.get("module"), context.get("method"), context);
 			else
-				return this.executeTargetModule(context.get("module"), this);
+				return this.executeTargetModule(context.get("module"), context);
 		}
 		catch (e:Dynamic)
 		{
@@ -135,7 +130,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		}
 		catch (e:Dynamic)
 		{
-			throw new ModuleException("module can not be created:" + target, this, "createTargetModule");
+			throw new ModuleException("module can not be created:" + target + " at " + this._rootFolder, this, "createTargetModule");
 			return null;
 		}
 	}

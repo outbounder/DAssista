@@ -37,6 +37,58 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	
 	/**
 	 * @return Bool
+	 * @target classname entry point which will be used to generate swc 
+	 * @dest class path dir which will be used as destination
+	 * @throws ModuleException 
+	 */
+	public function swc(context:IMultiModuleContext):Dynamic
+	{
+		if (!context.has("target") || !context.has("dest"))
+			throw new ModuleException("target and dest needed", this, "swc");
+		var target:String = context.get("target");
+		var dest:String = context.get("dest");
+		var useRttiInfos:String = context.has("usertti")?"-D use_rtti_doc":"";
+		
+		var dirContext:IMultiModuleContext = context.clone();
+		dirContext.set("target", Path.withoutExtension(dest));
+		if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
+			throw new ModuleException("can not create dir " + target, this, "as3");
+		
+		var cmdContext:IMultiModuleContext = context.clone();
+		cmdContext.set("root", "");
+		cmdContext.set("cmd",  "haxe -swf9 " +context.getRealPath(dest) + ".swc " + target + " " +useRttiInfos+" --flash-strict -swf-version 10");
+		var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+		return result == 0;
+	}
+	
+	/**
+	 * @return Bool
+	 * @target classname entry point which will be used to generate as3 code 
+	 * @dest class path dir which will be used as destination
+	 * @throws ModuleException 
+	 */
+	public function as3(context:IMultiModuleContext):Dynamic
+	{
+		if (!context.has("target") || !context.has("dest"))
+			throw new ModuleException("target and dest needed", this, "swc");
+		var target:String = context.get("target");
+		var dest:String = context.get("dest");
+		var useRttiInfos:String = context.has("usertti")?"-D use_rtti_doc":"";
+		
+		var dirContext:IMultiModuleContext = context.clone();
+		dirContext.set("target", dest);
+		if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
+			throw new ModuleException("can not create dir " + target, this, "as3");
+		
+		var cmdContext:IMultiModuleContext = context.clone();
+		cmdContext.set("root", "");
+		cmdContext.set("cmd",  "haxe  -as3 " +context.getRealPath(dest) + " " + target + " " +useRttiInfos);
+		var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
+		return result == 0;
+	}
+	
+	/**
+	 * @return Bool
 	 * @throws ModuleException
 	 * @target class path to entry (dir or file without hx extension)
 	 */
