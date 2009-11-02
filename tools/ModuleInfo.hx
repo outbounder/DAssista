@@ -76,8 +76,22 @@ class ModuleInfo implements IMultiModule, implements Infos
 	public function info(context:IMultiModuleContext):Dynamic
 	{
 		var target:IMultiModule = context.createTargetModule(context.get("target"));
-		var method:Dynamic = context.get("method");
+		var method:Dynamic = context.get("m");
 		context.output("<module name='"+context.get("target")+"'>\n"+context.describe(target,method)+"\n</module>");
+		return true;
+	}
+	
+	public function listMethods(context:IMultiModuleContext):Dynamic
+	{
+		var target:IMultiModule = context.createTargetModule(context.get("target"));
+		
+		for (field in Type.getInstanceFields(Type.getClass(target)))
+		{
+			if (Reflect.isFunction(Reflect.field(target, field)))
+			{
+				context.output("<method classname='"+context.get("target")+"'>" + field + "</method>");
+			}
+		}
 		return true;
 	}
 }

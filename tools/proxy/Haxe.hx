@@ -70,7 +70,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 	public function as3(context:IMultiModuleContext):Dynamic
 	{
 		if (!context.has("target") || !context.has("dest"))
-			throw new ModuleException("target and dest needed", this, "swc");
+			throw new ModuleException("target and dest needed", this, "as3");
 		var target:String = context.get("target");
 		var dest:String = context.get("dest");
 		var useRttiInfos:String = context.has("usertti")?"-D use_rtti_doc":"";
