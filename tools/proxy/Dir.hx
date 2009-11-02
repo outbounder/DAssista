@@ -65,10 +65,6 @@ class Dir implements IMultiModule, implements Infos
 			var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 			return result == 0;
 		}
-		else
-		{
-			throw new ModuleException("directory does not exists "+target+" to be cleaned", this, "clean");
-			return false;
-		}
+		return true;
 	}
 }
