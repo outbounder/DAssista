@@ -81,6 +81,10 @@ class ModuleInfo implements IMultiModule, implements Infos
 		return true;
 	}
 	
+	/**
+	 * @target module class path upon which all public methods will be returned
+	 * @return Bool
+	 */
 	public function listMethods(context:IMultiModuleContext):Dynamic
 	{
 		var target:IMultiModule = context.createTargetModule(context.get("target"));

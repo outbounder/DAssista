@@ -9,6 +9,7 @@ import neko.vm.Module;
 import neko.vm.Loader;
 import neko.FileSystem;
 import neko.io.Path;
+import neko.io.File;
 import neko.Sys;
 
 class MultiModuleContext implements IMultiModuleContext, implements IMultiModule, implements Infos
@@ -119,18 +120,20 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
         // load the module & return its instance
 		try
 		{
-			this.compileTargetModule(moduleClassPath);
+			if (!FileSystem.exists(this.getRealPath(moduleClassPath) + ".n"))
+				this.compileTargetModule(moduleClassPath); // compile to .n
 			
-			var moduleCompiledPath:String = this.getRealPath(moduleClassPath)+".n";
+			var moduleCompiledPath:String = this.getRealPath(moduleClassPath) + ".n";
 			var nekoModule:Module = Loader.local().loadModule(moduleCompiledPath);
 			var multiModuleInstance:Dynamic = nekoModule.execute();
 			
-			this._cache.set(moduleClassPath, multiModuleInstance); // save to cache
+			this._cache.set(moduleClassPath, multiModuleInstance); // save to cache the module instance
+			
 			return multiModuleInstance;
 		}
 		catch (e:Dynamic)
 		{
-			throw new ModuleException("module can not be created:" + target + " at " + this._rootFolder, this, "createTargetModule");
+			throw new ModuleException("module can not be created:" + target + " at " + this._rootFolder+" EXCEPTION:"+e, this, "createTargetModule");
 			return null;
 		}
 	}
@@ -143,6 +146,8 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		var result:Int = -1;
 		try
 		{
+			if(FileSystem.exists(this.getRealPath(moduleClassPath) + ".stable"))
+				FileSystem.deleteFile(this.getRealPath(moduleClassPath) + ".stable"); // remove the stable version
 			var oldCwd:String = Sys.getCwd();
 			Sys.setCwd(moduleDir);
 			var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath+" -D use_rtti_doc";
