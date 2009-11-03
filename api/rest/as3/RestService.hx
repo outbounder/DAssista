@@ -68,6 +68,41 @@ class RestService extends EventDispatcher, implements IRestServiceContext
 			result.push(prop + "=" + this._properties.get(prop));
 		return result.join("&");
 	}
+	
+	public static function getRealPath(rootFolder:String, target:String):String
+	{
+		if (target.indexOf(":") != -1)
+			return target; // it is full path
+			
+		if (target.indexOf("/") == -1)
+			target = target.split(".").join("/");  // it is class name path style, convert to file system.
+		if (target.indexOf("./") == 0)
+			target = target.substr(2); // remove the relative prefix
+		var result:String = rootFolder + target;
+		result = result.split("/").join("\\"); // workaround slashes
+		// remove last slash
+		if (result.charAt(result.length - 1) == "\\") // to be changed
+			return result.substr(0, result.length - 1);
+		else
+			return result;
+	}
+	
+	public static function getClassPath(rootFolder:String, target:String):String
+	{
+		// full/relative path with extension is not permitted for class paths.
+		if(target.indexOf(".") != -1 && (target.indexOf(":") != -1 || target.indexOf("./") != -1)) 
+			target = target.substr(0, target.lastIndexOf("."));
+		if (target.indexOf(rootFolder) != -1)
+			target = target.split(rootFolder)[1]; // remove the root folder
+		if (target.indexOf("./") == 0)
+			target = target.substr(3, target.length - 2);
+		target = target.split("/").join("\\"); // workaround slashes
+		if (target.indexOf("\\") == 0)
+			target = target.substr(1); // remove starting repo root slash
+		if (target.indexOf(":") != -1)
+			return "can not convert full path outside of repo to classpath " + target;
+		return target.split("\\").join(".");
+	}
 }
 
 private class RestServiceLoader extends URLLoader

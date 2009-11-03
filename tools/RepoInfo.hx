@@ -9,7 +9,7 @@ import neko.FileSystem;
 import neko.io.Path;
 
 /**
- * @description module for gathering all available information about given module
+ * @description module for gathering all available information about given repo
  */
 class RepoInfo implements IMultiModule, implements Infos
 {
@@ -22,7 +22,7 @@ class RepoInfo implements IMultiModule, implements Infos
 	}
 	
 	/**
-	 * @params requires noting
+	 * @desc requires noting
 	 * @return String
 	 */
 	public function getRootFolderRealPath(context:IMultiModuleContext):Dynamic

@@ -15,6 +15,7 @@ import neko.Sys;
 class MultiModuleContext implements IMultiModuleContext, implements IMultiModule, implements Infos
 {
 	public var _rootFolder:String;
+	
 	private var _hash:Hash<Dynamic>;
 	private var _cache:Hash<Dynamic>;
 	
@@ -189,6 +190,9 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 			target = target.split(this._rootFolder)[1]; // remove the root folder
 		if (target.indexOf("./") == 0)
 			target = target.substr(3, target.length - 2);
+		target = target.split("/").join("\\"); // workaround slashes
+		if (target.indexOf("\\") == 0)
+			target = target.substr(1); // remove starting repo root slash
 		if (target.indexOf(":") != -1)
 			throw new ModuleException("can not convert full path outside of repo to classpath " + target, this, "getClassPath");
 		return target.split("\\").join(".");
