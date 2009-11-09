@@ -170,8 +170,10 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 				dirContext.set("target", dest);
 				if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
 					throw new ModuleException("can not create target dir " + dest, this, "haxe");
-				
-				cmdContext.set("root", "");
+				if (context.has("root"))
+					cmdContext.set("root", context.getRealPath(context.get("root")));
+				else
+					cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe -php " + dest + " --php-front " + context.get("front") + " -main " + context.get("target"));
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 				return result == 0;
