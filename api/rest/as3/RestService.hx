@@ -20,7 +20,7 @@ class RestService extends EventDispatcher, implements IRestServiceContext
 		if(endpoint != null)
 			this.endpoint = endpoint;
 		else
-			this.endpoint = "http://localhost:2000";
+			this.endpoint = "http://pdrepo.dev";
 		this._properties = new Hash();
 	}
 	

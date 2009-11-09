@@ -1,5 +1,1 @@
-<module parser="haxe.org.dassista.tools.parsers.MetadataPdml">
-    <gitCloneURL>git://github.com/outbounder/DAssista.git</gitCloneURL>
-    <author>Boris Filipov</author>
-    <version>0.0.5</version>
-</module>
+<module parser='haxe.org.dassista.tools.parsers.MetadataPdml'><gitCloneURL>git://github.com/outbounder/DAssista.git</gitCloneURL><author>Boris Filipov</author><version>0.0.7</version></module>

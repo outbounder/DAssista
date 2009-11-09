@@ -4,6 +4,8 @@ import neko.Web;
 import haxe.org.dassista.contexts.RestServiceContext;
 import haxe.org.dassista.IMultiModuleContext;
 
+import neko.FileSystem;
+
 class RestService
 {
 	private static var restContext:RestServiceContext;
@@ -11,7 +13,8 @@ class RestService
 	public static function main()
 	{
 		restContext = new RestServiceContext();
-		restContext._rootFolder = Web.getCwd().split("/").join("\\");
+		var root:String = FileSystem.fullPath(Web.getCwd()+"../../../");
+		restContext._rootFolder = root+"\\";
 		
 		// execute the context according incoming variables
 		handleRequests();
@@ -23,7 +26,7 @@ class RestService
 		var requestContext:IMultiModuleContext = restContext.clone();
 		
 		// push all variables in the context
-		for (arg in Web.getParams().keys())
+		 for (arg in Web.getParams().keys())
 			requestContext.set(arg, Web.getParams().get(arg));
 			
 		restContext.execute(requestContext);
