@@ -41,7 +41,7 @@ class Parser implements IMultiModule, implements Infos
 		this.startTime = Sys.time();
 		context.output("parsing " + context.get("target"));
 		
-		var result:Dynamic = this.parseTarget(context.get("target"), context);
+		var result:Dynamic = this.parseTarget(context);
 		  
 		var end:Float = Sys.time();
 		context.output("time " + (end - this.startTime) + " s");
@@ -52,8 +52,9 @@ class Parser implements IMultiModule, implements Infos
 	 * @target to be parsed
 	 * @return Dynamic (parser's result)
 	 */
-	public function parseTarget(target:String, context:IMultiModuleContext):Dynamic
+	public function parseTarget(context:IMultiModuleContext):Dynamic
 	{
+		var target:String = context.get("target");
 		var fullPath:String = context.getRealPath(target);
 		if (fullPath.lastIndexOf(".pdml") == -1)
 			fullPath = fullPath + ".pdml";

@@ -36,10 +36,9 @@ class Cmd implements IMultiModule, implements Infos
 		var newPath:String  = oldPath + ";" + context.getRealPath("haxe.org.dassista.tools")+"\\"; // to be changed for unix support
 		Sys.putEnv("PATH", newPath); // this shouldn't be here.
 		
-		cmd = 'cmd.exe /c ' + cmd;
-
 		// create the process (command line execution only)
-		var prc:Process = new Process("C:\\windows\\system32\\cmd.exe", [cmd]);
+		var prc:Process = new Process("C:\\windows\\system32\\cmd.exe", ['/c '+cmd]);
+		//var prc:Process = new Process(context.getRealPath("haxe.org.dassista.tools") + "\\" + "nircmdc.exe", ['execmd cmd /c ' + cmd]);
 		
 		// get & read the output
 		var prcError:Input = prc.stderr;
