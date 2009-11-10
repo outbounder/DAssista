@@ -23,11 +23,23 @@ class RepoInfo implements IMultiModule, implements Infos
 	
 	/**
 	 * @desc requires noting
-	 * @return String
+	 * @return Bool
 	 */
 	public function getRootFolderRealPath(context:IMultiModuleContext):Dynamic
 	{
 		context.output(context.getRealPath(""));
+		return true;
+	}
+	
+	/**
+	 * @target the target file/directory which class path will be outputed
+	 * @return Bool
+	 */
+	public function getClassPath(context:IMultiModuleContext):Dynamic
+	{
+		if (!context.has("target"))
+			throw new ModuleException("target needed", this, "getClassPath");
+		context.output(context.getClassPath(context.get("target")));
 		return true;
 	}
 }

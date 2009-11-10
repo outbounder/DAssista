@@ -64,7 +64,10 @@ class ActionPdml implements IMultiModule, implements Infos
 				
 			// call 
 			if (!this.synchMethodCaller(actionInstance, action.name, actionContext))
+			{
+				context.output("method not executed " + action.name + " at " + action.att.classname);
 				return false;
+			}
 				
 			// gather all results presented in the context as out
 			for (key in actionContext.keys())

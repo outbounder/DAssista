@@ -8,8 +8,8 @@ class Shell
 	public static function main()
 	{
 		var shellContext:ShellContext = new ShellContext();
-		shellContext._rootFolder = Sys.getCwd();
-
+		shellContext._rootFolder = Sys.getCwd().split("/").join("\\");
+		
 		// push all variables in the context
 		for (arg in Sys.args())
 			shellContext.set(arg.split("=")[0], arg.split("=")[1]);

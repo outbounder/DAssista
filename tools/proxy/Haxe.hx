@@ -183,10 +183,10 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 				var target:String = context.get("target");
 				var moduleDir:String = context.getRealPath(Path.withoutExtension(target)); // only rootFolder + the directory of the module 
 				var moduleName:String = Path.extension(target); // only module name
-				var useRttiInfos:String = context.has("usertti")?"-D use_rtti_doc":"";
+				var useRttiInfos:String = context.has("usertti")?" -D use_rtti_doc":"";
 				
 				cmdContext.set("root", "");
-				cmdContext.set("cmd",  "haxe  -neko " + moduleDir + "\\" + moduleName + ".n -main " + target + " " + useRttiInfos);
+				cmdContext.set("cmd",  "haxe -neko " + moduleDir + "\\" + moduleName + ".n -main " + target + useRttiInfos);
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 				return result == 0;
 			};

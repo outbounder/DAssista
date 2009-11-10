@@ -14,7 +14,7 @@ class RestService
 	{
 		restContext = new RestServiceContext();
 		var root:String = FileSystem.fullPath(Web.getCwd()+"../../../");
-		restContext._rootFolder = root+"\\";
+		restContext._rootFolder = root;
 		
 		// execute the context according incoming variables
 		handleRequests();

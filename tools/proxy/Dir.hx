@@ -40,7 +40,7 @@ class Dir implements IMultiModule, implements Infos
 		{
 			var cmdContext:Dynamic = context.clone();
 			cmdContext.set("root", "");
-			cmdContext.set("cmd", "mkdir "+target);
+			cmdContext.set("cmd", 'mkdir '+target);
 			return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext) == 0;
 		}
 		
@@ -61,7 +61,7 @@ class Dir implements IMultiModule, implements Infos
 		{
 			var cmdContext:Dynamic = context.clone();
 			cmdContext.set("root", "");
-			cmdContext.set("cmd", "rmdir "+target+" /s /q ");
+			cmdContext.set("cmd", 'rmdir /s /q '+target);
 			var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 			return result == 0;
 		}

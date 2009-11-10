@@ -65,6 +65,13 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		return haxe.org.dassista.Attributes.of(Type.getClass(instance), field).toXml();
 	}
 	
+	public function clearModulesCache(context:IMultiModuleContext):Bool
+	{
+		this._cache = new Hash();
+		context.output("cache cleared");
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param	context
@@ -77,7 +84,16 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		try
 		{
 			if (!context.has("module"))
-				throw new ModuleException("module is needed", this, "execute");
+			{
+				if (!context.has("method"))
+					throw new ModuleException('method needed', this, 'execute');
+					
+				var f = Reflect.field(this, context.get("method"));
+				if(Reflect.isFunction(f))
+					return Reflect.callMethod(this, f, [context]);
+				else
+					throw new ModuleException('not a possible action '+context.get("method")+" over module "+Type.getClass(this), this, "callTargetModuleMethod");
+			}
 			
 			// execute the target module or its method
 			if (context.has("method"))
@@ -186,15 +202,15 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		// full/relative path with extension is not permitted for class paths.
 		if(target.indexOf(".") != -1 && (target.indexOf(":") != -1 || target.indexOf("./") != -1)) 
 			target = Path.withoutExtension(target);
-		if (target.indexOf(this._rootFolder) != -1)
-			target = target.split(this._rootFolder)[1]; // remove the root folder
 		if (target.indexOf("./") == 0)
 			target = target.substr(3, target.length - 2);
 		target = target.split("/").join("\\"); // workaround slashes
+		if (target.indexOf(this._rootFolder) != -1)
+			target = target.split(this._rootFolder)[1]; // remove the root folder
 		if (target.indexOf("\\") == 0)
 			target = target.substr(1); // remove starting repo root slash
 		if (target.indexOf(":") != -1)
-			throw new ModuleException("can not convert full path outside of repo to classpath " + target, this, "getClassPath");
+			throw new ModuleException("can not convert full path outside of repo to classpath " + target+" at repo "+this._rootFolder, this, "getClassPath");
 		return target.split("\\").join(".");
 	}
 }
