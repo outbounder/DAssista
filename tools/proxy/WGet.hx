@@ -39,6 +39,12 @@ class WGet implements IMultiModule, implements Infos
 	{
 		if (!context.has("dest") || !context.has("src") || !context.has("name"))
 			throw "dest, src and name are needed";
+		
+		var createDir:IMultiModuleContext = context.clone();
+		createDir.set("target", context.get("dest"));
+		if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", createDir))
+			return false;
+		
 		var dest:String = context.getRealPath(context.get("dest"));
 		context.set("root", "" );
 		context.set("cmd", "-x -O "+dest+"\\"+context.get("name")+" "+context.get("src"));
