@@ -26,7 +26,7 @@ class Copy implements IMultiModule, implements Infos
 	public function execute(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("src") == null || context.get("dest") == null)
-			throw "src & dest are required";
+			throw new ModuleException("src & dest are required", this, "execute");
 		
 		// conversions
 		var src:String = context.getRealPath(context.get("src"));

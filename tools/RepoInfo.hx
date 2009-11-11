@@ -13,7 +13,9 @@ import neko.io.Path;
  */
 class RepoInfo implements IMultiModule, implements Infos
 {
-	public function new() { }
+	private var stack:Array<String>;
+	
+	public function new() { this.stack = new Array(); }
 	public static function main() { return new RepoInfo(); }
 	
 	public function execute(context:IMultiModuleContext):Dynamic
@@ -41,5 +43,35 @@ class RepoInfo implements IMultiModule, implements Infos
 			throw new ModuleException("target needed", this, "getClassPath");
 		context.output(context.getClassPath(context.get("target")));
 		return true;
+	}
+	
+	/**
+	 * @target the target file which will be added to stack, and its value will be outputed
+	 * @return Bool
+	 */
+	public function stackPdmlFile(context:IMultiModuleContext):Dynamic
+	{
+		if (!context.has("target"))
+			throw new ModuleException("target needed", this, "stack");
+		
+		if (this.getClassPath(context))
+		{
+			this.stack.push(context.getClassPath(context.get("target")));
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	/**
+	 * @desc requires nothing
+	 * @return Bool
+	 */
+	public function getPdmlStackList(context:IMultiModuleContext):Dynamic
+	{
+		for (pdmlFile in this.stack)
+		{
+			context.output(pdmlFile);
+		}
 	}
 }
