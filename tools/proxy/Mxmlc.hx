@@ -66,6 +66,8 @@ class Mxmlc implements IMultiModule, implements Infos
 	 * @target directory which will be packaged to air
 	 * @dest destination directory
 	 * @name name of the application description file without .xml
+	 * @keypath class path to the key .p12
+	 * @keypass password for the key
 	 * @return
 	 */
 	public function packageair(context:IMultiModuleContext):Dynamic
@@ -76,7 +78,10 @@ class Mxmlc implements IMultiModule, implements Infos
 		var cmdContext:IMultiModuleContext = context.clone();
 		var dest:String = context.getRealPath(context.get("dest"));
 		cmdContext.set('root', context.getRealPath(context.get("target")));
-		cmdContext.set("cmd", "adt –package -storetype pkcs12 -keystore cert.p12 " + dest + "\\" + context.get("name") + ".air " + context.get("name") + "-app.xml .");
+		var cmd:String = "adt -package -storetype pkcs12 -keystore " + context.getRealPath(context.get("keypath")) + ".p12  -storepass "+context.get("keypass")+" "+
+			dest + "\\" + context.get("name") + ".air " + context.get("name") + "-app.xml .";
+		
+		cmdContext.set("cmd", cmd);
 		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext) == 0;
 	}
 }

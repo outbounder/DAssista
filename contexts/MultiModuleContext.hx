@@ -10,6 +10,7 @@ import neko.vm.Loader;
 import neko.FileSystem;
 import neko.io.Path;
 import neko.io.File;
+import neko.io.Process;
 import neko.Sys;
 
 class MultiModuleContext implements IMultiModuleContext, implements IMultiModule, implements Infos
@@ -163,12 +164,12 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 		var result:Int = -1;
 		try
 		{
-			if(FileSystem.exists(this.getRealPath(moduleClassPath) + ".stable"))
-				FileSystem.deleteFile(this.getRealPath(moduleClassPath) + ".stable"); // remove the stable version
 			var oldCwd:String = Sys.getCwd();
 			Sys.setCwd(moduleDir);
-			var cmd:String = "haxe -cp "+this._rootFolder+" -neko " + moduleName + ".n -main " + moduleClassPath+" -D use_rtti_doc";
-			result = Sys.command(cmd);
+			var cmd:String = "-cp " + this._rootFolder + " -neko " + moduleName + ".n -main " + moduleClassPath + " -D use_rtti_doc";
+			var prc:Process = new Process('haxe.exe', ['"'+cmd+'"']);
+			var result:Int = prc.exitCode();
+			//result = Sys.command("haxe "+cmd);
 			Sys.setCwd(oldCwd);
 		}
 		catch (e:Dynamic)

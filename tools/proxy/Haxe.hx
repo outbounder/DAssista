@@ -73,7 +73,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 			throw new ModuleException("target and dest needed", this, "as3");
 		var target:String = context.get("target");
 		var dest:String = context.get("dest");
-		var useRttiInfos:String = context.has("usertti")?"-D use_rtti_doc":"";
+		var useRttiInfos:String = context.has("usertti")?" -D use_rtti_doc":"";
 		
 		var dirContext:IMultiModuleContext = context.clone();
 		dirContext.set("target", dest);
@@ -82,7 +82,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 		
 		var cmdContext:IMultiModuleContext = context.clone();
 		cmdContext.set("root", "");
-		cmdContext.set("cmd",  "haxe  -as3 " +context.getRealPath(dest) + " " + target + " " +useRttiInfos);
+		cmdContext.set("cmd",  "haxe  -as3 " +context.getRealPath(dest) + " " + target + useRttiInfos);
 		var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 		return result == 0;
 	}
