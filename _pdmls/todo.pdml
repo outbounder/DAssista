@@ -1,0 +1,10 @@
+<pdml>
+    <issue>
+        <module>haxe.org.dassista.tools.proxy.Copy</module>
+        <desc>simplify</desc>
+    </issue>
+    <issue>
+        <module>haxe.org.dassista.tools.parsers.ActionPdml</module>
+        <desc>improve placeholder & context state remembering</desc>
+    </issue>
+</pdml>
