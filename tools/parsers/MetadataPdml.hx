@@ -13,9 +13,11 @@ import haxe.org.dassista.ModuleException;
  */
 class MetadataPdml implements IMultiModule, implements Infos
 {
+	private var metadata:Hash<Dynamic>;
+	
     public function new()
     {
-        
+		this.metadata = new Hash();
     }
 
     public static function main():Dynamic
@@ -36,9 +38,21 @@ class MetadataPdml implements IMultiModule, implements Infos
 		var pdml:Fast = context.get("pdml"); 
         for(entry in pdml.elements)
         {
-            context.set(entry.name, entry.innerData);
+            this.metadata.set(entry.name, entry.innerData);
         }
         
         return true;
     }
+	
+	/**
+	 * @name key name within metadata hash
+	 * @return
+	 */
+	public function get(context:IMultiModuleContext):Dynamic
+	{
+		if(context.has("name"))
+			return this.metadata.get(context.get("name"));
+		else
+			return null;
+	}
 }

@@ -45,7 +45,7 @@ class Placeholder implements IMultiModule, implements Infos
 				while (r.match(target))
 				{
 					var value:String = r.matched(0);
-					var newvalue:String = context.get(value.substr(1, value.length-2));
+					var newvalue:String = this.getMetadata(value.substr(1, value.length-2),context); 
 					if (newvalue == null)
 					{
 						if (neko.Web.isModNeko)
@@ -70,4 +70,12 @@ class Placeholder implements IMultiModule, implements Infos
 		context.set("result", target);
 		return true;
     }
+	
+	private function getMetadata(name:String,context:IMultiModuleContext):Dynamic
+	{
+		// metadata is usually stored within MetadataPdml module
+		var mContext:IMultiModuleContext = context.clone();
+		mContext.set("name", name);
+		return mContext.callTargetModuleMethod("haxe.org.dassista.tools.parsers.MetadataPdml", "get", mContext);
+	}
 }
