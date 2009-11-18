@@ -48,7 +48,7 @@ class File implements IMultiModule, implements Infos
 	public function createEmptyFile(context:IMultiModuleContext):Dynamic
 	{
 		if (context.get("root") == null || context.get("name") == null)
-			throw new ModuleException("root and name are needed", this, "execute");
+			throw new ModuleException("root and name are needed", this, "createEmptyFile");
 		var root:String = context.getRealPath(context.get("root"));
 		var name:String = context.get("name");
 		
@@ -58,5 +58,56 @@ class File implements IMultiModule, implements Infos
 		else
 			context.set('output', output);
 		return true;
+	}
+	
+	/**
+	 * @src dir where file resides
+	 * @name name of the file with extension
+	 * @newname new name of the file with extension
+	 * @return Bool
+	 */
+	public function renameFile(context:IMultiModuleContext):Dynamic
+	{
+		if (!context.has("src") || !context.has("name") || !context.has("newname"))
+			throw new ModuleException("src, name & newname are needed", this, "renameFile");
+		var src:String = context.getRealPath(context.get("src"))+"//";
+		var name:String = context.get("name");
+		var newname:String = context.get("newname");
+		
+		try
+		{
+			neko.FileSystem.rename(src + name, src + newname);
+			return true;
+		}
+		catch (error:Dynamic)
+		{
+			throw new ModuleException(error, this, "renameFile");
+			return false;
+		}
+	}
+	
+	/**
+	 * @src dir where file resides
+	 * @name name of the file with extension to be deleted
+	 * @return Bool
+	 */
+	public function deleteFile(context:IMultiModuleContext):Dynamic
+	{
+		if (!context.has("src") || !context.has("name"))
+			throw new ModuleException("src and name are needed", this, "deleteFile");
+		var src:String = context.getRealPath(context.get("src"))+"//";
+		var name:String = context.get("name");
+		
+		try
+		{
+			if(neko.FileSystem.exists(src + name))
+				neko.FileSystem.deleteFile(src + name);
+			return true;
+		}
+		catch (error:Dynamic)
+		{
+			throw new ModuleException(error, this, "renameFile");
+			return false;
+		}
 	}
 }

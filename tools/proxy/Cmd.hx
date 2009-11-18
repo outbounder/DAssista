@@ -20,6 +20,7 @@ class Cmd implements IMultiModule, implements Infos
 	 * 
 	 * @root folder upon which current cwd will be set
 	 * @cmd command and arguments to be executed as shell command
+	 * @capture stderr | stdout string mode for capturing the output
 	 * @return Int
 	 */
 	public function execute(context:IMultiModuleContext):Dynamic
@@ -38,17 +39,21 @@ class Cmd implements IMultiModule, implements Infos
 		
 		// create the process (command line execution only)
 		var prc:Process = new Process("cmd.exe", ['/c '+cmd]);
-		//var prc:Process = new Process(context.getRealPath("haxe.org.dassista.tools") + "\\" + "chp.exe", [cmd]);
 		
 		// get & read the output
-		var prcError:Input = prc.stderr;
+		
+		var prcInput:Input = null;
+		if (context.get("capture") == 'stdout')
+			prcInput = prc.stdout;
+		else
+			prcInput = prc.stderr;
 		
 		try
 		{
 			while (true)
 			{
-				var str_error:String = prcError.readLine();
-				context.output(str_error);
+				var str:String = prcInput.readLine();
+				context.output(str);
 			}
 		}
 		catch ( ex:haxe.io.Eof )  { } 
