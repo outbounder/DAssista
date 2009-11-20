@@ -36,7 +36,7 @@ class ShellRenderer implements IMultiModule, implements Infos
 			File.stdout().writeString(context.describe(value.getModule(), value.getMethod()).toString()+"\n");
 		}
 		else
-			File.stdout().writeString(value.toString()+"\n");
+			File.stdout().writeString(value+"\n");
 		return true;
 	}
 }

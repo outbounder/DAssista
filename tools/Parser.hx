@@ -71,8 +71,6 @@ class Parser implements IMultiModule, implements Infos
 		var parserContext:IMultiModuleContext = context.clone();
 		parserContext.set("pdml", pdml);
 		var result:Dynamic = parser.execute(parserContext);
-		for (key in parserContext.keys())
-			context.set(key, parserContext.get(key));
 		return result;
 	}
 }

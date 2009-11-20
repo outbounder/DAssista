@@ -68,10 +68,6 @@ class ActionPdml implements IMultiModule, implements Infos
 				context.output("method not executed " + action.name + " at " + action.att.classname);
 				return false;
 			}
-				
-			// gather all results presented in the context as out
-			for (key in actionContext.keys())
-				context.set(key, actionContext.get(key));
         }
     
         return true;

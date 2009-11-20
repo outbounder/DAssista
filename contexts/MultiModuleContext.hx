@@ -160,12 +160,24 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 	
 	public function compileTargetModule(moduleClassPath:String):Bool
 	{
-		var moduleDir:String = this.getRealPath(Path.withoutExtension(moduleClassPath)); // only rootFolder + the directory of the module 
+		var moduleDirClassPath:String = Path.withoutExtension(moduleClassPath);
+		var moduleDir:String = this.getRealPath(moduleDirClassPath); // only rootFolder + the directory of the module 
 		var moduleName:String = Path.extension(moduleClassPath); // only module name
 		
 		var result:Int = -1;
 		try
 		{
+			var oldCwd:String = Sys.getCwd();
+			Sys.setCwd(this._rootFolder);
+			var prc:haxe.org.neko.Prc = new haxe.org.neko.Prc();
+			var cmd:String = "haxe -neko " + moduleDir + "\\" + moduleName + ".n -main " + moduleClassPath + " -D use_rtti_doc";
+			var prcOutput:String = prc.exec(cmd);	
+			this.output(prcOutput);
+			if (prcOutput == "")
+				result = 0;
+			else
+				result = 1; 
+			/* 
 			var oldCwd:String = Sys.getCwd();
 			Sys.setCwd(moduleDir);
 			var cmd:String = "-cp " + this._rootFolder + " -neko " + moduleName + ".n -main " + moduleClassPath + " -D use_rtti_doc";
@@ -180,7 +192,7 @@ class MultiModuleContext implements IMultiModuleContext, implements IMultiModule
 				}
 			}
 			catch ( ex:haxe.io.Eof )  { } 
-			var result:Int = prc.exitCode();
+			var result:Int = prc.exitCode();*/
 			//result = Sys.command("haxe "+cmd);
 			Sys.setCwd(oldCwd);
 		}

@@ -50,7 +50,7 @@ class Copy implements IMultiModule, implements Infos
 			var cmdContext:IMultiModuleContext = context.clone();
 			cmdContext.set("root", "");
 			cmdContext.set("capture", "stdout");
-			cmdContext.set("cmd", "robocopy " + src + " " + dest+" "+excludes+" /e /NFL /NDL /NJH /NJS");
+			cmdContext.set("cmd", "robocopy " + src + " " + dest + " " + excludes + " /e /NFL /NDL /NJH /NJS");
 			var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
 			return result == 1;
 		}

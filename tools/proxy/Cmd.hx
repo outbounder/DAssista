@@ -31,6 +31,7 @@ class Cmd implements IMultiModule, implements Infos
 		var root:String = context.getRealPath(context.get("root"));
 		var cmd:String = context.get("cmd");
 		
+	
 		var oldCwd:String = Sys.getCwd();
 		Sys.setCwd(root); 
 		var oldPath:String = Sys.getEnv("PATH");
@@ -38,7 +39,7 @@ class Cmd implements IMultiModule, implements Infos
 		Sys.putEnv("PATH", newPath); // this shouldn't be here.
 		
 		// create the process (command line execution only)
-		var prc:Process = new Process("cmd.exe", ['/c '+cmd]);
+		/* var prc:Process = new Process("cmd.exe", ['/c '+cmd]);
 		
 		// get & read the output
 		
@@ -58,10 +59,14 @@ class Cmd implements IMultiModule, implements Infos
 		}
 		catch ( ex:haxe.io.Eof )  { } 
 
-		var result:Int = prc.exitCode();
+		var result:Int = prc.exitCode(); */
+		
+		var prc:haxe.org.neko.Prc = new haxe.org.neko.Prc();
+		var prcOutput:String = prc.exec(cmd);
+		context.output(prcOutput);
 		
 		Sys.setCwd(oldCwd);
-		Sys.putEnv("PATH", oldPath); 
-		return result;
+		Sys.putEnv("PATH", oldPath);
+		return prcOutput;
 	}
 }

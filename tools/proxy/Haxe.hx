@@ -176,7 +176,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 					cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe -php " + dest + " --php-front " + context.get("front") + " -main " + context.get("target"));
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
-				return result == 0;
+				return result.length == 0;
 			};
 			case "neko":
 			{
@@ -188,7 +188,7 @@ class Haxe implements IMultiModule, implements haxe.rtti.Infos
 				cmdContext.set("root", "");
 				cmdContext.set("cmd",  "haxe -neko " + moduleDir + "\\" + moduleName + ".n -main " + target + useRttiInfos);
 				var result:Dynamic = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext);
-				return result == 0;
+				return result.length == 0;
 			};
 		}
 		

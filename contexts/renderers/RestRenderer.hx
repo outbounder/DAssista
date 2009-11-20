@@ -38,7 +38,7 @@ class RestRenderer implements IMultiModule, implements Infos
 			neko.Lib.println("</METHOD>");
 		}
 		else
-			neko.Lib.println("<output>" + value.toString() + "</output>");
+			neko.Lib.println("<output>" + value + "</output>");
 		neko.Web.flush();
 		return true;
 	}
