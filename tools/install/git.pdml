@@ -1,8 +1,0 @@
-<module parser="haxe.org.dassista.modules.parsers.ActionPdml">
-  <probe classname="haxe.org.dassista.tools.proxy.GitProbe">
-    <src>http://msysgit.googlecode.com/files/Git-1.6.5.1-preview20091022.exe</src>
-  </probe>
-  <pageant classname="haxe.org.dassista.tools.proxy.Git" asynch="true">
-    <target>C:\Users\outbounder\Desktop\keys\20091011.ppk</target>
-  </pageant>
-</module>

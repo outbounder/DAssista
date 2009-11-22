@@ -1,10 +1,20 @@
-<pdml parser="haxe.org.dassista.tools.parsers.ActionPdml">
-    <neko classname="haxe.org.dassista.tools.proxy.Haxe">
-      <target>haxe.org.dassista.tools</target>
-      <usertti></usertti>
+<pdml parser="org.dassista.modules.parsers.ActionPdml">
+    <neko classname="org.dassista.modules.proxy.Haxe">
+      <src>haxe.org.dassista.src</src>
+      <main>org.dassista.app.Shell</main>
+      <dest>releases.org.dassista.app.Shell</dest>
+      <usertti />
     </neko>
-    <neko classname="haxe.org.dassista.tools.proxy.Haxe">
-      <target>haxe.org.dassista.contexts</target>
-      <usertti></usertti>
+    <neko classname="org.dassista.modules.proxy.Haxe">
+      <src>haxe.org.dassista.src</src>
+      <main>org.dassista.app.RestService</main>
+      <dest>releases.org.dassista.app.RestService</dest>
+      <usertti />
+    </neko>
+    <neko classname="org.dassista.modules.proxy.Haxe">
+      <src>haxe.org.dassista.src</src>
+      <main>org.dassista.modules</main>
+      <dest>releases.org.dassista.modules</dest>
+      <usertti />
     </neko>
 </pdml>
