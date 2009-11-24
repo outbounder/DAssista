@@ -48,7 +48,7 @@ class Copy implements Infos
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
 			cmdContext.setArg("cmd", "robocopy " + src + " " + dest + " " + excludes + " /e /NFL /NDL /NJH /NJS");
-			var result:String = context.callModuleMethod("haxe.org.dassista.tools.proxy.Cmd", "execute", cmdContext);
+			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
 			return result.length == 0;
 		}
 		else
@@ -56,9 +56,8 @@ class Copy implements Infos
 			var files:String = context.getArg("name");
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
-			cmdContext.setArg("capture", "stdout");
 			cmdContext.setArg("cmd", "robocopy " + src + " " + dest+" "+files+" "+excludes+" /NFL /NDL /NJH /NJS");
-			var result:Dynamic = context.callModuleMethod("haxe.org.dassista.tools.proxy.Cmd", "execute", cmdContext);
+			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
 			return result.length == 0;
 		}
 	}
