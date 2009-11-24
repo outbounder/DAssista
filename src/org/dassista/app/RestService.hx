@@ -1,6 +1,7 @@
 package org.dassista.app;
 
 import neko.Web;
+import org.dassista.api.contexts.neko.MethodContext;
 
 class RestService
 {
@@ -9,8 +10,8 @@ class RestService
 	public static function main()
 	{
 		restContext = new RestServiceContext();
-		restContext.setRootFolder(Web.getCwd()); // releases.org.dassista.app.RestService		
-		restContext.defineModulesSearchPath("haxe.org.dassista.src", "releases.org.dassista.modules");	
+		restContext.setRootFolder(Web.getCwd().split("/").join("\\"));
+		restContext.defineModulesSearchPath("haxe.org.dassista.src", "_app.org.dassista.modules");
 		
 		handleRequests();
 		Web.cacheModule(handleRequests);
@@ -21,7 +22,7 @@ class RestService
 		restContext.setArgsHash(Web.getParams());
 		try
 		{
-			restContext.callModuleMethod(restContext.getModuleName(),restContext.getMethodName(), restContext.clone());
+			restContext.callModuleMethod(restContext.getModuleName(),restContext.getMethodName(), new MethodContext(restContext));
 		}
 		catch(e:Dynamic)
 		{

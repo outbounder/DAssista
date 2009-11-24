@@ -11,7 +11,7 @@ class Shell
 		var shellContext:ShellContext = new ShellContext();
 		shellContext.setArgsArray(Sys.args());
 		shellContext.setRootFolder(Sys.getCwd().split("/").join("\\")); // releases.org.dassista.app.Shell
-		shellContext.defineModulesSearchPath("haxe.org.dassista.src", "releases.org.dassista.modules");
+		shellContext.defineModulesSearchPath("haxe.org.dassista.src", "_app.org.dassista.modules");
 		try
 		{
 			shellContext.callModuleMethod(shellContext.getModuleName(),shellContext.getMethodName(), new MethodContext(shellContext));

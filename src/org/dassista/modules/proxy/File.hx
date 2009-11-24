@@ -1,22 +1,14 @@
-package haxe.org.dassista.tools.proxy;
+package org.dassista.modules.proxy;
 
-import haxe.org.dassista.IMultiModule;
-import haxe.org.dassista.IMultiModuleContext;
-import haxe.org.dassista.ModuleException;
+import org.dassista.api.contexts.neko.MethodContext;
+
 import haxe.rtti.Infos;
-
 import neko.io.FileOutput;
 
-class File implements IMultiModule, implements Infos
+class File implements Infos
 {
 	public function new() { }
 	public static function main() { return new File(); }
-	
-	public function execute(context:IMultiModuleContext):Dynamic
-	{
-		throw "not implemented";
-		return false;
-	}
 	
 	/**
 	 * @desc creates a file with provided content, if not creates empty file
@@ -25,15 +17,15 @@ class File implements IMultiModule, implements Infos
 	 * @name name of the file with extension to be created
 	 * @return
 	 */
-	public function createFile(context:IMultiModuleContext):Dynamic
+	public function createFile(context:MethodContext):Bool
 	{
-		context.set('dontclose', context.has("content"));
+		context.setArg('dontclose', context.hasArg("content"));
 		if (!this.createEmptyFile(context))
 			return false;
-		if (context.has("content"))
+		if (context.hasArg("content"))
 		{
-			var output:FileOutput = context.get('output');
-			output.writeString(context.get('content'));
+			var output:FileOutput = context.getArg('output');
+			output.writeString(context.getArg('content'));
 			output.close();
 		}
 		return true;
@@ -45,18 +37,18 @@ class File implements IMultiModule, implements Infos
 	 * @name name of the file with extension to be created
 	 * @return Bool
 	 */
-	public function createEmptyFile(context:IMultiModuleContext):Dynamic
+	public function createEmptyFile(context:MethodContext):Bool
 	{
-		if (context.get("root") == null || context.get("name") == null)
-			throw new ModuleException("root and name are needed", this, "createEmptyFile");
-		var root:String = context.getRealPath(context.get("root"));
-		var name:String = context.get("name");
+		if (!context.hasArg("root") || !context.hasArg("name"))
+			throw "root and name are needed";
+		var root:String = context.getRealPath(context.getArg("root"));
+		var name:String = context.getArg("name");
 		
 		var output:FileOutput = neko.io.File.write(root + "//" + name, true);
-		if (context.get('dontclose') != true)
+		if (context.getArg('dontclose') != true)
 			output.close();
 		else
-			context.set('output', output);
+			context.setArg('output', output);
 		return true;
 	}
 	
@@ -66,24 +58,16 @@ class File implements IMultiModule, implements Infos
 	 * @newname new name of the file with extension
 	 * @return Bool
 	 */
-	public function renameFile(context:IMultiModuleContext):Dynamic
+	public function renameFile(context:MethodContext):Bool
 	{
-		if (!context.has("src") || !context.has("name") || !context.has("newname"))
-			throw new ModuleException("src, name & newname are needed", this, "renameFile");
-		var src:String = context.getRealPath(context.get("src"))+"//";
-		var name:String = context.get("name");
-		var newname:String = context.get("newname");
-		
-		try
-		{
-			neko.FileSystem.rename(src + name, src + newname);
-			return true;
-		}
-		catch (error:Dynamic)
-		{
-			throw new ModuleException(error, this, "renameFile");
-			return false;
-		}
+		if (!context.hasArg("src") || !context.hasArg("name") || !context.hasArg("newname"))
+			throw "src, name & newname are needed";
+		var src:String = context.getRealPath(context.getArg("src"))+"//";
+		var name:String = context.getArg("name");
+		var newname:String = context.getArg("newname");
+
+		neko.FileSystem.rename(src + name, src + newname);
+		return true;
 	}
 	
 	/**
@@ -91,23 +75,15 @@ class File implements IMultiModule, implements Infos
 	 * @name name of the file with extension to be deleted
 	 * @return Bool
 	 */
-	public function deleteFile(context:IMultiModuleContext):Dynamic
+	public function deleteFile(context:MethodContext):Bool
 	{
-		if (!context.has("src") || !context.has("name"))
-			throw new ModuleException("src and name are needed", this, "deleteFile");
-		var src:String = context.getRealPath(context.get("src"))+"//";
-		var name:String = context.get("name");
-		
-		try
-		{
-			if(neko.FileSystem.exists(src + name))
-				neko.FileSystem.deleteFile(src + name);
-			return true;
-		}
-		catch (error:Dynamic)
-		{
-			throw new ModuleException(error, this, "renameFile");
-			return false;
-		}
+		if (!context.hasArg("src") || !context.hasArg("name"))
+			throw "src and name are needed";
+		var src:String = context.getRealPath(context.getArg("src"))+"//";
+		var name:String = context.getArg("name");
+
+		if(neko.FileSystem.exists(src + name))
+			neko.FileSystem.deleteFile(src + name);
+		return true;
 	}
 }

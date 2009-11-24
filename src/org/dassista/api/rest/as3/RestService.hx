@@ -7,8 +7,6 @@ import flash.events.EventDispatcher;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 
-import haxe.org.dassista.api.rest.as3.IRestServiceContext;
-
 class RestService extends EventDispatcher, implements IRestServiceContext
 {
 	private var endpoint:String;
@@ -46,7 +44,7 @@ class RestService extends EventDispatcher, implements IRestServiceContext
 		
 		var loader:RestServiceLoader = new RestServiceLoader(onResultDataEventHandler);
 		var urlArgs:String = this.getPropertiesAsUrlArgs();
-		var urlRequest:URLRequest = new URLRequest(this.endpoint + "/haxe/org/dassista/RestService.n?" + (urlArgs != null?urlArgs:""));
+		var urlRequest:URLRequest = new URLRequest(this.endpoint + "/RestService.n?" + (urlArgs != null?urlArgs:""));
 		loader.load(urlRequest);
 	}
 		
@@ -57,7 +55,7 @@ class RestService extends EventDispatcher, implements IRestServiceContext
 		
 		var loader:RestServiceLoader = new RestServiceLoader(onResultDataEventHandler);
 		var urlArgs:String = context.getPropertiesAsUrlArgs();
-		var urlRequest:URLRequest = new URLRequest(this.endpoint + "/haxe/org/dassista/RestService.n?" + (urlArgs != null?urlArgs:""));
+		var urlRequest:URLRequest = new URLRequest(this.endpoint + "/RestService.n?" + (urlArgs != null?urlArgs:""));
 		loader.load(urlRequest);
 	}
 	

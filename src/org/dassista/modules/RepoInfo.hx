@@ -1,8 +1,6 @@
-package haxe.org.dassista.tools;
+package org.dassista.modules;
 
-import haxe.org.dassista.IMultiModule;
-import haxe.org.dassista.IMultiModuleContext;
-import haxe.org.dassista.ModuleException;
+import org.dassista.api.contexts.neko.MethodContext;
 
 import haxe.rtti.Infos;
 import neko.FileSystem;
@@ -11,23 +9,18 @@ import neko.io.Path;
 /**
  * @description module for gathering all available information about given repo
  */
-class RepoInfo implements IMultiModule, implements Infos
+class RepoInfo implements Infos
 {
 	private var stack:Array<String>;
 	
 	public function new() { this.stack = new Array(); }
 	public static function main() { return new RepoInfo(); }
 	
-	public function execute(context:IMultiModuleContext):Dynamic
-	{
-		throw new ModuleException("not implemented", this, "execute");
-	}
-	
 	/**
 	 * @desc requires noting
 	 * @return Bool
 	 */
-	public function getRootFolderRealPath(context:IMultiModuleContext):Dynamic
+	public function getRootFolderRealPath(context:MethodContext):Dynamic
 	{
 		context.output(context.getRealPath(""));
 		return true;
@@ -37,11 +30,11 @@ class RepoInfo implements IMultiModule, implements Infos
 	 * @target the target file/directory which class path will be outputed
 	 * @return Bool
 	 */
-	public function getClassPath(context:IMultiModuleContext):Dynamic
+	public function getClassPath(context:MethodContext):Dynamic
 	{
-		if (!context.has("target"))
-			throw new ModuleException("target needed", this, "getClassPath");
-		context.output(context.getClassPath(context.get("target")));
+		if (!context.hasArg("target"))
+			throw "target needed";
+		context.output(context.getClassPath(context.getArg("target")));
 		return true;
 	}
 	
@@ -49,14 +42,14 @@ class RepoInfo implements IMultiModule, implements Infos
 	 * @target the target file which will be added to stack, and its value will be outputed
 	 * @return Bool
 	 */
-	public function stackPdmlFile(context:IMultiModuleContext):Dynamic
+	public function stackPdmlFile(context:MethodContext):Dynamic
 	{
-		if (!context.has("target"))
-			throw new ModuleException("target needed", this, "stack");
+		if (!context.hasArg("target"))
+			throw "target needed";
 		
 		if (this.getClassPath(context))
 		{
-			this.stack.push(context.getClassPath(context.get("target")));
+			this.stack.push(context.getClassPath(context.getArg("target")));
 			return true;
 		}
 		else
@@ -67,7 +60,7 @@ class RepoInfo implements IMultiModule, implements Infos
 	 * @desc requires nothing
 	 * @return Bool
 	 */
-	public function getPdmlStackList(context:IMultiModuleContext):Dynamic
+	public function getPdmlStackList(context:MethodContext):Dynamic
 	{
 		for (pdmlFile in this.stack)
 		{

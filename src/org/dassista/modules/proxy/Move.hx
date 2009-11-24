@@ -1,15 +1,13 @@
-package haxe.org.dassista.tools.proxy;
+package org.dassista.modules.proxy;
 
-import haxe.org.dassista.IMultiModule;
-import haxe.org.dassista.IMultiModuleContext;
-import haxe.org.dassista.ModuleException;
+import org.dassista.api.contexts.neko.MethodContext;
+
 import haxe.rtti.Infos;
-
 import neko.io.File;
 import neko.io.Path;
 import neko.FileSystem;
 
-class Move implements IMultiModule, implements Infos
+class Move implements Infos
 {
 	public function new() { }
 	public static function main() { return new Move(); }
@@ -19,14 +17,14 @@ class Move implements IMultiModule, implements Infos
 	 * @dest dest class path where src will be moved
 	 * @return Bool
 	 */
-	public function execute(context:IMultiModuleContext):Dynamic
+	public function execute(context:MethodContext):Dynamic
 	{
-		if (!context.has("src") || !context.has("dest"))
+		if (!context.hasArg("src") || !context.hasArg("dest"))
 			throw "target and dest are needed";
-		if (FileSystem.isDirectory(context.getRealPath(context.get("src"))))
+		if (FileSystem.isDirectory(context.getRealPath(context.getArg("src"))))
 			throw "not implemented";
-		var srcFileRealPath:String = context.getRealPath(context.get("src"));
-		var destFileRealPath:String = context.getRealPath(context.get("dest")) + "//" + Path.withoutDirectory(srcFileRealPath);
+		var srcFileRealPath:String = context.getRealPath(context.getArg("src"));
+		var destFileRealPath:String = context.getRealPath(context.getArg("dest")) + "//" + Path.withoutDirectory(srcFileRealPath);
 		File.copy(srcFileRealPath, destFileRealPath);
 		FileSystem.deleteFile(srcFileRealPath);
 		return true;

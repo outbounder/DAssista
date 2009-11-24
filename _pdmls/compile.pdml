@@ -2,19 +2,19 @@
     <neko classname="org.dassista.modules.proxy.Haxe">
       <src>haxe.org.dassista.src</src>
       <main>org.dassista.app.Shell</main>
-      <dest>releases.org.dassista.app.Shell</dest>
+      <dest>Shell</dest>
       <usertti />
     </neko>
     <neko classname="org.dassista.modules.proxy.Haxe">
       <src>haxe.org.dassista.src</src>
       <main>org.dassista.app.RestService</main>
-      <dest>releases.org.dassista.app.RestService</dest>
+      <dest>RestService</dest>
       <usertti />
     </neko>
     <neko classname="org.dassista.modules.proxy.Haxe">
       <src>haxe.org.dassista.src</src>
       <main>org.dassista.modules</main>
-      <dest>releases.org.dassista.modules</dest>
+      <dest>_app.org.dassista.modules</dest>
       <usertti />
     </neko>
 </pdml>

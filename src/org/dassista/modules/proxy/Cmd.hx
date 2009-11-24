@@ -34,7 +34,7 @@ class Cmd implements Infos
 		var oldCwd:String = Sys.getCwd();
 		Sys.setCwd(root); 
 		var oldPath:String = Sys.getEnv("PATH");
-		var newPath:String  = oldPath + ";" + context.getRealPath("releases.org.dassita.tools")+"\\"; // to be changed for unix support
+		var newPath:String  = oldPath + ";" + context.getRealPath("_app.org.dassita.tools")+"\\"; // to be changed for unix support
 		Sys.putEnv("PATH", newPath); // this shouldn't be here.
 				
 		var prc:Prc = new Prc();

@@ -1,1 +1,0 @@
-<pdml parser='haxe.org.dassista.tools.parsers.ActionPdml'><parseTarget classname='haxe.org.dassista.tools.Parser'><target>cpp.org.dassista.prc._pdmls.export-nekovm</target></parseTarget><parseTarget classname='haxe.org.dassista.tools.Parser'><target>haxe.org.dassista._pdmls.compile-testprc</target></parseTarget></pdml>

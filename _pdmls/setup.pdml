@@ -1,1 +1,0 @@
-<pdml parser='haxe.org.dassista.tools.parsers.ActionPdml'><execute classname='haxe.org.dassista.tools.Parser'><target>haxe.org.dassista._pdmls.install-pdmleditor</target></execute><parseTarget classname='haxe.org.dassista.tools.Parser'><target>haxe.org.dassista._pdmls.rebuild</target></parseTarget></pdml>

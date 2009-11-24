@@ -1,65 +1,50 @@
-package haxe.org.dassista.tools.proxy;
+package org.dassista.modules.proxy;
 
-import haxe.org.dassista.IMultiModule;
-import haxe.org.dassista.IMultiModuleContext;
-import haxe.org.dassista.ModuleException;
+import org.dassista.api.contexts.neko.MethodContext;
+
 import haxe.rtti.Infos;
-
 import neko.io.Path;
 import neko.io.File;
 
-class Mxmlc implements IMultiModule, implements Infos
+class Mxmlc implements Infos
 {
 	public function new() { }
 	public static function main() { return new Mxmlc(); }
-	
-	/**
-	 * @root folder on which git will be executed
-	 * @cmd args which will apply to git execution
-	 * @return Bool
-	 */
-	public function execute(context:IMultiModuleContext):Dynamic
-	{
-		throw "not implemented";
-		return false;
-	}
 	
 	/**
 	 * @target class path of the application to be compiled
 	 * @dest class path where the output will be placed
 	 * @return Bool
 	 */
-	public function amxmlc(context:IMultiModuleContext):Dynamic
+	public function amxmlc(context:MethodContext):Bool
 	{
-		if (!context.has("target") || !context.has("dest"))
-			throw new ModuleException("target and dest are needed", this, "amxmlc");
+		if (!context.hasArg("target") || !context.hasArg("dest"))
+			throw "target and dest are needed";
 			
-		var dirContext:IMultiModuleContext = context.clone();
-		dirContext.set('target', context.get("dest"));
-		if (!context.callTargetModuleMethod("haxe.org.dassista.tools.proxy.Dir", "create", dirContext))
+		var dirContext:MethodContext = new MethodContext(context);
+		dirContext.setArg('target', context.getArg("dest"));
+		if (!context.callModuleMethod("org.dassista.modules.proxy.Dir", "create", dirContext))
 			return false;
 		
-		var cmdContext:IMultiModuleContext = context.clone();
-		cmdContext.set('root', context.getRealPath(context.get("dest")));
-		cmdContext.set("cmd", "amxmlc " + context.getRealPath(context.get('target'))+'.mxml');
-		var result:Bool = context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext) == 0;
-		if (result == true)
-		{
-			var target:String = context.get('target');
-			var targetRealPath:String = context.getRealPath(target);
-			var targetName:String = Path.extension(target);
-			var destRealPath:String = context.getRealPath(context.get("dest"));
-			var fileContext:IMultiModuleContext = context.clone();
-			fileContext.set("src", targetRealPath + ".swf");
-			fileContext.set("dest", destRealPath);
-			if (!context.executeTargetModule("haxe.org.dassista.tools.proxy.Move", fileContext))
-				return false;
-				
-			File.copy(targetRealPath + "-app.xml", destRealPath + "\\" + targetName + "-app.xml");
-			return true;
-		}
-		else
+		var cmdContext:MethodContext = new MethodContext(context);
+		cmdContext.setArg('root', context.getRealPath(context.getArg("dest")));
+		cmdContext.setArg("cmd", "cmd.exe /c amxmlc " + context.getRealPath(context.getArg('target'))+'.mxml');
+		context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
+		
+		var target:String = context.getArg('target');
+		var destRealPath:String = context.getRealPath(context.getArg("dest"));
+		var targetRealPath:String = context.getRealPath(target);
+		var targetName:String = Path.extension(target);
+		
+		var fileContext:MethodContext = new MethodContext(context);
+		fileContext.setArg("src", targetRealPath + ".swf");
+		fileContext.setArg("dest", destRealPath);
+		if (!context.callModuleMethod("org.dassista.modules.proxy.Move", "execute", fileContext))
 			return false;
+			
+		File.copy(targetRealPath + "-app.xml", destRealPath + "\\" + targetName + "-app.xml");
+		return true;
+		
 	}
 	
 	/**
@@ -70,18 +55,18 @@ class Mxmlc implements IMultiModule, implements Infos
 	 * @keypass password for the key
 	 * @return
 	 */
-	public function packageair(context:IMultiModuleContext):Dynamic
+	public function packageair(context:MethodContext):Bool
 	{
-		if (!context.has("target") || !context.has("dest") || !context.has("name"))
-			throw new ModuleException("target and dest are needed", this, "packageair");
+		if (!context.hasArg("target") || !context.hasArg("dest") || !context.hasArg("name"))
+			throw "target and dest are needed";
 		
-		var cmdContext:IMultiModuleContext = context.clone();
-		var dest:String = context.getRealPath(context.get("dest"));
-		cmdContext.set('root', context.getRealPath(context.get("target")));
-		var cmd:String = "adt -package -storetype pkcs12 -keystore " + context.getRealPath(context.get("keypath")) + ".p12  -storepass "+context.get("keypass")+" "+
-			dest + "\\" + context.get("name") + ".air " + context.get("name") + "-app.xml .";
+		var cmdContext:MethodContext = new MethodContext(context);
+		var dest:String = context.getRealPath(context.getArg("dest"));
+		cmdContext.setArg('root', context.getRealPath(context.getArg("target")));
+		var cmd:String = "cmd.exe /c adt -package -storetype pkcs12 -keystore " + context.getRealPath(context.getArg("keypath")) + ".p12  -storepass "+context.getArg("keypass")+" "+
+			dest + "\\" + context.getArg("name") + ".air " + context.getArg("name") + "-app.xml .";
 		
-		cmdContext.set("cmd", cmd);
-		return context.executeTargetModule("haxe.org.dassista.tools.proxy.Cmd", cmdContext) == 0;
+		cmdContext.setArg("cmd", cmd);
+		return context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext).length == 0;
 	}
 }

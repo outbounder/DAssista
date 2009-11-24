@@ -52,14 +52,23 @@ class AppContext extends RepoContext
 	
 	public function callModuleMethod(target:String, method:String, context:MethodContext):Dynamic
 	{
-		if(method == null || method == "")
-			throw "methodName must be provided";
-		var module:Dynamic = this.getModule(target);
-		var f = Reflect.field(module, method);
-		if(Reflect.isFunction(f))
-			return Reflect.callMethod(module, f, [context]);
-		else
-			return null;
+		try
+		{
+			if(target == null || target == "")
+				throw "moduleName must be provided";
+			if(method == null || method == "")
+				throw "methodName must be provided";
+			var module:Dynamic = this.getModule(target);
+			var f = Reflect.field(module, method);
+			if(Reflect.isFunction(f))
+				return Reflect.callMethod(module, f, [context]);
+			else
+				return null;
+		}
+		catch (e:Dynamic)
+		{
+			throw "exception found during call method:" + method + " on module:" + target + " reason:" + e;
+		}
 	}
 	
 	public function getModule(target:String):Dynamic
@@ -72,11 +81,15 @@ class AppContext extends RepoContext
             return this.getModuleCache().get(target);
                 
 		if (this.needsCompile(target))
-			if(this.compileModule(target).length != 0)
-				throw "can not compile target "+target;
+		{
+			if (this.compileModule(target).length != 0)
+				throw "can not compile target " + target;
+		}
 		
 		var nekoModule:Module = Module.readPath(this.findDestPath(target.split('.').join('\\')), this.getModuleSearchBinaryPaths(), Loader.local());
 		var module:Dynamic = nekoModule.execute(); // execute the module, it should register in the context himself ;)
+		if (module == null)
+			throw "module " + target + " did not returned proper module instance on request";
 		
 		this.getModuleCache().set(target, module); // save to cache the module instance
 		

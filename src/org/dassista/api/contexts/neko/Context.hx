@@ -33,11 +33,4 @@ class Context implements IContext
 	{
 		this._hash = value;
 	}
-	
-	public function clone():Dynamic
-	{
-		var clone:Dynamic = Type.createInstance(Type.getClass(this),[]);
-		clone.setProperties(this.getProperties());
-		return clone;
-	}
 }

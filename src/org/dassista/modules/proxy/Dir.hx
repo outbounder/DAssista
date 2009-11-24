@@ -33,8 +33,8 @@ class Dir implements Infos
 		{
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
-			cmdContext.setArg("cmd", 'mkdir '+target);
-			return context.callModuleMethod("haxe.org.dassista.tools.proxy.Cmd", "execute", cmdContext).length == 0;
+			cmdContext.setArg("cmd", 'cmd /c mkdir '+target);
+			return context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext).length == 0;
 		}
 		
 		return true;
@@ -54,8 +54,8 @@ class Dir implements Infos
 		{
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
-			cmdContext.setArg("cmd", 'rmdir /s /q '+target);
-			var result:String = context.callModuleMethod("haxe.org.dassista.tools.proxy.Cmd", "execute", cmdContext);
+			cmdContext.setArg("cmd", 'cmd /c rmdir '+target+' /s/q');
+			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
 			return result.length == 0;
 		}
 		return true;

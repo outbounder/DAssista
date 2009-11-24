@@ -22,18 +22,12 @@ class ModuleInfo  implements Infos
 	{
 		if (!context.hasArg("target"))
 			throw "target needed";
-			
+		
 		var target:String = context.getArg("target");
 		if (FileSystem.exists(context.getRealPath(target)))
-		{
-			// target is existing directory
 			return this.infoThisDir(context);
-		}
-		if (FileSystem.exists(context.getRealPath(target) + ".hx"))
-		{
+		else
 			return this.info(context);
-		}
-		throw "target is not either source .hx or directory";
 	}
 	
 	/**
@@ -43,24 +37,17 @@ class ModuleInfo  implements Infos
 	public function infoThisDir(context:MethodContext):Dynamic
 	{
 		var target:String = context.getArg("target");
-		var dirFullPath:String = context.getRealPath(target);
-		
+		var fullTarget:String = context.getRealPath(target);
+		if (fullTarget.lastIndexOf("\\") != fullTarget.length - 1)
+			fullTarget += "\\";
+			
 		// compile all
-		var entries:Array<String> = FileSystem.readDirectory(dirFullPath);
-		for (entry in entries)
+		var binaryFiles:Array < String > = context.getRealPathTreeList(target, "n");
+		for(binaryModule in binaryFiles)
 		{
-			if (FileSystem.kind(dirFullPath+"\\"+entry) == FileKind.kdir)
-			{
-				context.setArg("target", target + "." + entry);
-				if (!this.infoThisDir(context))
-					return false;
-			}
-			else if(Path.extension(entry) == "hx")
-			{
-				context.setArg("target", target + "." + Path.withoutExtension(entry));
-				if (!this.info(context))
-					return false;
-			}
+			var targetModule:String = Path.withoutExtension(binaryModule).split(fullTarget)[1].split("\\").join(".");
+			context.setArg("target", targetModule);
+			this.info(context);
 		}
 		
 		return true;
@@ -72,14 +59,21 @@ class ModuleInfo  implements Infos
 	 */
 	public function info(context:MethodContext):Dynamic
 	{
-		var target:Dynamic = context.getModule(context.getArg("target"));
-		var method:Dynamic;
-		if(context.hasArg("m"))
-			method = context.getArg("m");
-		else
-			method = null;
-		context.output("<module name='"+context.getArg("target")+"'>\n"+Attributes.of(Type.getClass(target), method).toString()+"\n</module>");
-		return true;
+		try
+		{
+			var target:Dynamic = context.getModule(context.getArg("target"));
+			var method:Dynamic;
+			if(context.hasArg("m"))
+				method = context.getArg("m");
+			else
+				method = null;
+			context.output("<module name='" + context.getArg("target") + "'>\n" + Attributes.of(Type.getClass(target), method).toXml() +"\n</module>");
+			return true;
+		}
+		catch (e:Dynamic)
+		{
+			throw "can not get info over" + context.getArg("target") + " reason:" + e;
+		}
 	}
 	
 	/**

@@ -1,13 +1,10 @@
-<pdml parser="haxe.org.dassista.tools.parsers.ActionPdml">
-    <clean classname="haxe.org.dassista.tools.proxy.Dir">
+<pdml parser="org.dassista.modules.parsers.ActionPdml">
+    <clean classname="org.dassista.modules.proxy.Dir">
         <target>as3.libs.dassista.api.rest</target>
     </clean>
-    <as3 classname="haxe.org.dassista.tools.proxy.Haxe">
-        <target>haxe.org.dassista.api.rest.as3.RestService</target>
+    <as3 classname="org.dassista.modules.proxy.Haxe">
+        <src>haxe.org.dassista.src</src>
+        <main>org.dassista.api.rest.as3.RestService</main>
         <dest>as3.libs.dassista.api.rest.src</dest>
     </as3>
-    <swc classname="haxe.org.dassista.tools.proxy.Haxe">
-        <target>haxe.org.dassista.api.rest.as3.RestService</target>
-        <dest>as3.libs.dassista.api.rest.bin.restSevice</dest>
-    </swc>
 </pdml>
