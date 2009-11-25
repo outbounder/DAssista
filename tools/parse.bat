@@ -1,2 +1,2 @@
 @echo off
-neko .\releases\haxe\org\dassista\Shell.n module=haxe.org.dassista.tools.Parser target=%*
+neko Shell.n moduleName=org.dassista.modules.Parser methodName=execute target=%*
