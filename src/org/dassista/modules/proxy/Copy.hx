@@ -43,13 +43,13 @@ class Copy implements Infos
 			excludes += "/XD " + context.getArg("excludeDirs")+" ";
 		
 		// if name presented then it will be appened. hopefully this should be named something else
-		if (context.hasArg("name") == null)
+		if (!context.hasArg("name"))
 		{
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
 			cmdContext.setArg("cmd", "robocopy " + src + " " + dest + " " + excludes + " /e /NFL /NDL /NJH /NJS");
 			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
-			return result.length == 0;
+			return result.length == 2;
 		}
 		else
 		{
@@ -58,7 +58,7 @@ class Copy implements Infos
 			cmdContext.setArg("root", "");
 			cmdContext.setArg("cmd", "robocopy " + src + " " + dest+" "+files+" "+excludes+" /NFL /NDL /NJH /NJS");
 			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
-			return result.length == 0;
+			return result.length == 2;
 		}
 	}
 }
