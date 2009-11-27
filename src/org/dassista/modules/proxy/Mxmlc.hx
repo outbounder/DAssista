@@ -48,6 +48,37 @@ class Mxmlc implements Infos
 	}
 	
 	/**
+	 * @target class path of the application to be compiled
+	 * @dest class path where the output will be placed
+	 * @return Bool
+	 */
+	public function mxmlc(context:MethodContext):Bool
+	{
+		if (!context.hasArg("target") || !context.hasArg("dest"))
+			throw "target and dest are needed";
+			
+		var dirContext:MethodContext = new MethodContext(context);
+		dirContext.setArg('target', context.getArg("dest"));
+		if (!context.callModuleMethod("org.dassista.modules.proxy.Dir", "create", dirContext))
+			return false;
+		
+		var cmdContext:MethodContext = new MethodContext(context);
+		cmdContext.setArg('root', context.getRealPath(context.getArg("dest")));
+		cmdContext.setArg("cmd", "cmd.exe /c mxmlc " + context.getRealPath(context.getArg('target'))+'.mxml');
+		context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
+		
+		var target:String = context.getArg('target');
+		var destRealPath:String = context.getRealPath(context.getArg("dest"));
+		var targetRealPath:String = context.getRealPath(target);
+		var targetName:String = Path.extension(target);
+		
+		var fileContext:MethodContext = new MethodContext(context);
+		fileContext.setArg("src", targetRealPath + ".swf");
+		fileContext.setArg("dest", destRealPath);
+		return context.callModuleMethod("org.dassista.modules.proxy.Move", "execute", fileContext);		
+	}
+	
+	/**
 	 * @target directory which will be packaged to air
 	 * @dest destination directory
 	 * @name name of the application description file without .xml

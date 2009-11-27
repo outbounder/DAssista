@@ -40,14 +40,21 @@ class Copy implements Infos
 		if (context.hasArg("excludeFiles"))
 			excludes += "/XF " + context.getArg("excludeFiles")+" ";
 		if (context.hasArg("excludeDirs"))
-			excludes += "/XD " + context.getArg("excludeDirs")+" ";
+			excludes += "/XD " + context.getArg("excludeDirs") + " ";
+			
+		var dirContext:MethodContext = new MethodContext(context);
+		dirContext.setArg("target", context.getArg("dest"));
+		if (!context.callModuleMethod("org.dassista.modules.proxy.Dir", "create", dirContext))
+			throw "can not create dest " + dest;
 		
 		// if name presented then it will be appened. hopefully this should be named something else
 		if (!context.hasArg("name"))
 		{
+			var cmd:String = "robocopy " + src + " " + dest + " " + excludes + " /e /NFL /NDL /NJH /NJS";
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
-			cmdContext.setArg("cmd", "robocopy " + src + " " + dest + " " + excludes + " /e /NFL /NDL /NJH /NJS");
+			cmdContext.setArg("cmd", cmd);
+			
 			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
 			return result.length == 2;
 		}

@@ -54,7 +54,7 @@ class Dir implements Infos
 		{
 			var cmdContext:MethodContext = new MethodContext(context);
 			cmdContext.setArg("root", "");
-			cmdContext.setArg("cmd", 'cmd /c rmdir '+target+' /s/q');
+			cmdContext.setArg("cmd", 'cmd /c "rmdir '+target+' /s/q"');
 			var result:String = context.callModuleMethod("org.dassista.modules.proxy.Cmd", "execute", cmdContext);
 			return result.length == 0;
 		}
