@@ -31,48 +31,51 @@ class Parser implements Infos
 	/**
 	 * @return Bool
 	 * @target class|file path to entry without the .pdml extension
+	 * @xml xml content to be parsed 
 	 */
 	public function execute(context:MethodContext):Bool
 	{
-		if (!context.hasArg("target"))
-			throw "target needed";
-		this.startTime = Sys.time();
-		context.output("parsing " + context.getArg("target"));
+		if (!context.hasArg("target") && !context.hasArg("xml"))
+			throw "target or xml are needed";
 		
-		var result:Bool = this.parseTarget(context);
-		  
-		var end:Float = Sys.time();
-		context.output("time " + (end - this.startTime) + " s");
-		return result;
-	}
-	
-	/**
-	 * @target to be parsed
-	 * @return Dynamic (parser's result)
-	 */
-	public function parseTarget(context:MethodContext):Bool
-	{
-		var target:String = context.getArg("target");
-		var fullPath:String = context.getRealPath(target);
-		if (fullPath.lastIndexOf(".pdml") == -1)
-			fullPath = fullPath + ".pdml";
+		var pdml:Fast = null;
+		var parserContext:MethodContext = new MethodContext(context);
+		var pdmlOrigin:String = "unknown";
+		
+		if (context.hasArg("target"))
+		{
+			var target:String = context.getArg("target");
+			var fullPath:String = context.getRealPath(target);
+			if (fullPath.lastIndexOf(".pdml") == -1)
+				fullPath = fullPath + ".pdml";
+				
+			if (!FileSystem.exists(fullPath))
+				throw "can not find " + target + " to parse";
+				
+			pdmlOrigin = fullPath;
 			
-		if (!FileSystem.exists(fullPath))
-			throw "can not find " + target + " to parse";
+			// retrieve the pdml data
+			var pdmlContent:String = File.getContent(fullPath);
+			var xml:Xml = Xml.parse(pdmlContent);
+			pdml = new Fast(xml.firstElement());
+			parserContext.setArg("pdml", pdml);
+		}
+		else
+		if(context.hasArg("xml"))
+		{
+			var xml:Xml = Xml.parse(context.getArg("xml"));
+			pdml = new Fast(xml.firstElement());
+			pdmlOrigin = "dynamic xml";
+			parserContext.setArg("pdml", pdml);
+		}
 		
-		// retrieve the pdml data
-		var pdmlContent:String = File.getContent(fullPath);
-		var xml:Xml = Xml.parse(pdmlContent);
-		var pdml:Fast = new Fast(xml.firstElement());
-		
-		context.setArg("pdml", pdml);
 		try
 		{
-			return context.callModuleMethod(pdml.att.parser, "execute", context);
+			return context.callModuleMethod(pdml.att.parser, "execute", parserContext);
 		}
 		catch(e:Dynamic)
 		{
-			throw "could not parse "+target+" with parser:"+pdml.att.parser+" reason:"+e;
+			throw "could not parse "+pdmlOrigin+" with parser:"+pdml.att.parser+" reason:"+e;
 		}
 	}
 }
